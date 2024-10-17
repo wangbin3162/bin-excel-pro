@@ -6,7 +6,7 @@
 
 export const Theme = {
   // -----------------system---------------------//
-  binColorPrimary: '#165dff',
+  binColorPrimary: '#00B42A',
   binColorSuccess: '#52c41a',
   binColorWarning: '#fa8c16',
   binColorDanger: '#f5222d',

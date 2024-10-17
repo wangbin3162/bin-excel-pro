@@ -1,30 +1,22 @@
 :root {
-  /* 自定义主题变量，以 v开头，类别首字母开头，定义变量时类似 vGTextColor */
-
   /* 全局 global */
   --v-g-bg-color-1: #17171a;
   --v-g-bg-color-2: #232324;
   --v-g-bg-color-3: #2a2a2b;
   --v-g-bg-color-4: #313132;
-
   --v-g-text-color-1: #1d2129;
   --v-g-text-color-2: #4e5969;
   --v-g-text-color-3: #86909c;
   --v-g-text-color-4: #c9cdd4;
-
   --v-g-fill-color-1: #f7f8fa;
   --v-g-fill-color-2: #f2f3f5;
   --v-g-fill-color-3: #e5e6eb;
   --v-g-fill-color-4: #c9cdd4;
-
+  --v-g-bg-color: #fff;
   --v-g-text-color-dark: var(--v-g-text-color-1);
   --v-g-text-color: var(--v-g-text-color-2);
   --v-g-text-color-light: var(--v-g-text-color-3);
-
-  --v-g-bg-color: #fff;
   --v-g-border-color: var(--v-g-fill-color-3);
-  --v-g-border-color-dark: #333335;
-
   /* 头部 header */
   --v-header-height: 60px;
   --v-header-bg: var(--v-g-bg-color);
@@ -33,10 +25,8 @@
   --v-header-trigger-size: 28px;
   --v-header-trigger-radius: 50%;
   --v-header-trigger-border-color: var(--v-g-border-color);
-  --v-header-trigger-hover-bg-color: var(--v-g-fill-color-3);
+  --v-header-trigger-hover-bg-color: var(--v-g-border-color);
   /* 侧边栏 sider */
-  --v-sider-width: 220px;
-  --v-sider-collapse-width: 48px;
   --v-sider-bg: var(--v-g-bg-color);
   --v-sider-border-color: var(--v-g-border-color);
   --v-sider-collapse-btn-color: var(--v-g-text-color-3);
@@ -46,12 +36,12 @@
   --v-menu-item-height: 40px;
   --v-menu-item-border-radius: 4px;
   --v-menu-text-color: var(--v-g-text-color);
-  --v-menu-text-hover-color: var(--v-menu-text-color);
+  --v-menu-text-hover-color: var(--b-menu-text-color);
   --v-menu-text-active-color: var(--bin-color-primary);
   --v-menu-bg-color: var(--v-sider-bg);
   --v-menu-bg-hover-color: var(--bin-color-primary-light6);
   --v-menu-bg-active-color: var(--bin-color-primary-light6);
-  /* 多页签 tags-view  */
+  /* 多页签 tags-view */
   --v-tags-bg-color: var(--v-g-bg-color);
   --v-tags-border-color: var(--v-g-border-color);
   --v-tags-height: 32px;
@@ -77,8 +67,7 @@
   --v-page-hover-bg: var(--v-g-fill-color-2);
   --v-page-active-bg: var(--bin-color-primary-light5);
   /* ui library */
-  --colors: (primary: #165dff, success: #52c41a, warning: #fa8c16, danger: #f5222d);
-
+  --colors: (primary: #00b42a, success: #52c41a, warning: #fa8c16, danger: #f5222d);
   @each $val, $color in var(--colors) {
     --bin-color-$(val): $(color);
     --bin-color-$(val)-light1: mix(#fff, $(color), 0.2);
@@ -89,20 +78,17 @@
     --bin-color-$(val)-light6: mix(#fff, $(color), 0.95);
     --bin-color-$(val)-active: mix(#000, $(color), 0.1);
   }
-
   /* 以下不需要进行变量覆盖，根据实际情况调节即可 */
   /* 背景色 */
   --bin-bg-color-1: var(--v-g-bg-color-1);
   --bin-bg-color-2: var(--v-g-bg-color-2);
   --bin-bg-color-3: var(--v-g-bg-color-3);
   --bin-bg-color-4: var(--v-g-bg-color-4);
-
   /* 文字色 */
   --bin-text-color-1: var(--v-g-text-color-1);
   --bin-text-color-2: var(--v-g-text-color-2);
   --bin-text-color-3: var(--v-g-text-color-3);
   --bin-text-color-4: var(--v-g-text-color-4);
-
   /* 填充色 */
   --bin-fill-color-1: var(--v-g-fill-color-1);
   --bin-fill-color-2: var(--v-g-fill-color-2);

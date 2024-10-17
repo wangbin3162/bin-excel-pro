@@ -1,6 +1,6 @@
-export const SYSTEM_NAME = 'ADMIN-SIMPLE'
+export const SYSTEM_NAME = '报表系统'
 
-export const SYSTEM_KEY = '__ADMIN_SIMPLE__'
+export const SYSTEM_KEY = '__EXCEL_PRO__'
 
 export const SYSTEM_STORE = `${SYSTEM_KEY}PINIAKEY__`
 

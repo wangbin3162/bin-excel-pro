@@ -10,13 +10,12 @@
     <div class="layer">
       <div class="content" flex="dir:top main:justify cross:center box:justify">
         <div class="header">
-          <p class="header-motto">开箱即用的中后台管理系统</p>
+          <!-- <p class="header-motto">开箱即用的中后台管理系统</p> -->
         </div>
         <div class="main" flex="dir:top main:center cross:center">
           <!-- logo -->
           <div class="page-login--logo">
-            <img src="@/assets/images/logo/logo.svg" alt="logo" />
-            <span class="pl-8">{{ SYSTEM_NAME }}</span>
+            <span>{{ SYSTEM_NAME }}</span>
           </div>
           <!-- 表单 -->
           <div class="form">
@@ -80,10 +79,10 @@
           </div>
         </div>
         <div class="footer">
-          <p class="footer-copyright">
+          <!-- <p class="footer-copyright">
             {{ SYSTEM_NAME }} 简版后台管理系统
             <a href="https://github.com/wangbin3162/bin-admin-pro" target="_blank">github</a>
-          </p>
+          </p> -->
         </div>
       </div>
     </div>

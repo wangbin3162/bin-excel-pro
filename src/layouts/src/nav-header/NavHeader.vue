@@ -19,10 +19,10 @@
     </div>
     <div class="right-side">
       <SearchTrigger v-if="setting.showSearch" />
-      <MessageTrigger v-if="setting.showMessage" />
-      <WeatherTrigger v-if="setting.showWeather" />
+      <!-- <MessageTrigger v-if="setting.showMessage" />
+      <WeatherTrigger v-if="setting.showWeather" /> -->
       <SettingTrigger />
-      <ThemeTrigger />
+      <!-- <ThemeTrigger /> -->
       <UserTrigger />
     </div>
   </div>
@@ -33,10 +33,10 @@ import { onMounted, onBeforeUnmount, computed, ref, watch } from 'vue'
 import { on, off } from '@/utils/util'
 import Breadcrumb from './breadcrumb/Breadcrumb.vue'
 import SearchTrigger from './search/Search.vue'
-import WeatherTrigger from './weather/Weather.vue'
-import MessageTrigger from './message/Message.vue'
+// import WeatherTrigger from './weather/Weather.vue'
+// import MessageTrigger from './message/Message.vue'
 import SettingTrigger from './setting/Setting.vue'
-import ThemeTrigger from './theme/Theme.vue'
+// import ThemeTrigger from './theme/Theme.vue'
 import UserTrigger from './user/User.vue'
 import { useStore } from '@/pinia'
 import useMenu from '@/hooks/store/useMenu'
