@@ -67,7 +67,7 @@
   --v-page-hover-bg: var(--v-g-fill-color-2);
   --v-page-active-bg: var(--bin-color-primary-light5);
   /* ui library */
-  --colors: (primary: #00b42a, success: #52c41a, warning: #fa8c16, danger: #f5222d);
+  --colors: (primary: #165dff, success: #52c41a, warning: #fa8c16, danger: #f5222d);
   @each $val, $color in var(--colors) {
     --bin-color-$(val): $(color);
     --bin-color-$(val)-light1: mix(#fff, $(color), 0.2);

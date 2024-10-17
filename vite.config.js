@@ -1,5 +1,6 @@
 import { loadEnv, defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { univerPlugin } from '@univerjs/vite-plugin'
 import { resolve } from 'path'
 
 function pathResolve(dir) {
@@ -14,7 +15,7 @@ export default ({ mode }) => {
 
   return defineConfig({
     base: isProd ? env.VITE_PUBLIC_PATH : '/',
-    plugins: [vue()],
+    plugins: [vue(), univerPlugin()],
     server: {
       host: '0.0.0.0',
       port: 9085,

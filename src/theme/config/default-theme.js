@@ -5,84 +5,80 @@
  */
 
 export const Theme = {
-  // -----------------system---------------------//
-  binColorPrimary: '#00B42A',
-  binColorSuccess: '#52c41a',
-  binColorWarning: '#fa8c16',
-  binColorDanger: '#f5222d',
-
-  // -----------------system---------------------//
-  'vGBgColor-1': '#17171a',
-  'vGBgColor-2': '#232324',
-  'vGBgColor-3': '#2a2a2b',
-  'vGBgColor-4': '#313132',
-
-  'vGTextColor-1': '#1d2129',
-  'vGTextColor-2': '#4e5969',
-  'vGTextColor-3': '#86909c',
-  'vGTextColor-4': '#c9cdd4',
-
-  'vGFillColor-1': '#f7f8fa',
-  'vGFillColor-2': '#f2f3f5',
-  'vGFillColor-3': '#e5e6eb',
-  'vGFillColor-4': '#c9cdd4',
-
-  vGBgColor: '#fff',
-  vGTextColorDark: 'var(--v-g-text-color-1)',
-  vGTextColor: 'var(--v-g-text-color-2)',
-  vGTextColorLight: 'var(--v-g-text-color-3)',
-  vGBorderColor: 'var(--v-g-fill-color-3)',
-  // header
-  vHeaderHeight: '60px',
-  vHeaderBg: 'var(--v-g-bg-color)',
-  vHeaderTextColor: 'var(--v-g-text-color)',
-  vHeaderBorderColor: 'var(--v-g-border-color)',
-  vHeaderTriggerSize: '28px',
-  vHeaderTriggerRadius: '50%',
-  vHeaderTriggerBorderColor: 'var(--v-g-border-color)',
-  vHeaderTriggerHoverBgColor: 'var(--v-g-border-color)',
-  // 侧边栏
-  // vSiderWidth: '220px', // 侧边栏宽度使用setting设置
-  // vSiderCollapseWidth: '48px', // 侧边栏宽度使用setting设置
-  vSiderBg: 'var(--v-g-bg-color)',
-  vSiderBorderColor: 'var(--v-g-border-color)',
-  vSiderCollapseBtnColor: 'var(--v-g-text-color-3)',
-  vSiderCollapseBtnBg: 'var(--v-g-fill-color-1)',
-  vSiderCollapseBtnBgHover: 'var(--v-g-fill-color-3)',
-  // menu
-  vMenuItemHeight: '40px',
-  vMenuItemBorderRadius: '4px',
-  vMenuTextColor: 'var(--v-g-text-color)',
-  vMenuTextHoverColor: 'var(--b-menu-text-color)',
-  vMenuTextActiveColor: 'var(--bin-color-primary)',
-  vMenuBgColor: 'var(--v-sider-bg)',
-  vMenuBgHoverColor: 'var(--bin-color-primary-light6)',
-  vMenuBgActiveColor: 'var(--bin-color-primary-light6)',
-  // tags-view
-  vTagsBgColor: 'var(--v-g-bg-color)',
-  vTagsBorderColor: 'var(--v-g-border-color)',
-  vTagsHeight: '32px',
-  vTagsFontSize: '12px',
-  vTagsItemBorderRadius: '2px',
-  vTagsTextColor: 'var(--v-g-text-color)',
-  vTagsTextHoverColor: 'var(--v-g-text-color)',
-  vTagsTextActiveColor: 'var(--bin-color-primary)',
-  vTagsItemBgColor: 'var(--v-g-fill-color-2)',
-  vTagsItemBgHoverColor: 'var(--v-g-fill-color-2)',
-  vTagsItemBgActiveColor: 'var(--v-g-fill-color-2)',
-  vTagsItemBorderColor: 'var(--v-g-fill-color-2)',
-  vTagsItemBorderHoverColor: 'var(--v-g-fill-color-2)',
-  vTagsItemBorderActiveColor: 'var(--v-g-fill-color-2)',
-  // 内容区域
-  vContentBg: 'var(--v-g-fill-color-2)',
-  // table
-  vTableHeaderBg: 'var(--v-g-fill-color-2)',
-  vTableHeaderText: '#1d2129',
-  // page
-  vPageBorderColor: 'transparent',
-  vPageBg: 'var(--v-g-bg-color)',
-  vPageHoverBg: 'var(--v-g-fill-color-2)',
-  vPageActiveBg: 'var(--bin-color-primary-light5)',
+  // // -----------------system---------------------//
+  // binColorPrimary: '#00B42A',
+  // binColorSuccess: '#52c41a',
+  // binColorWarning: '#fa8c16',
+  // binColorDanger: '#f5222d',
+  // // -----------------system---------------------//
+  // 'vGBgColor-1': '#17171a',
+  // 'vGBgColor-2': '#232324',
+  // 'vGBgColor-3': '#2a2a2b',
+  // 'vGBgColor-4': '#313132',
+  // 'vGTextColor-1': '#1d2129',
+  // 'vGTextColor-2': '#4e5969',
+  // 'vGTextColor-3': '#86909c',
+  // 'vGTextColor-4': '#c9cdd4',
+  // 'vGFillColor-1': '#f7f8fa',
+  // 'vGFillColor-2': '#f2f3f5',
+  // 'vGFillColor-3': '#e5e6eb',
+  // 'vGFillColor-4': '#c9cdd4',
+  // vGBgColor: '#fff',
+  // vGTextColorDark: 'var(--v-g-text-color-1)',
+  // vGTextColor: 'var(--v-g-text-color-2)',
+  // vGTextColorLight: 'var(--v-g-text-color-3)',
+  // vGBorderColor: 'var(--v-g-fill-color-3)',
+  // // header
+  // vHeaderHeight: '60px',
+  // vHeaderBg: 'var(--v-g-bg-color)',
+  // vHeaderTextColor: 'var(--v-g-text-color)',
+  // vHeaderBorderColor: 'var(--v-g-border-color)',
+  // vHeaderTriggerSize: '28px',
+  // vHeaderTriggerRadius: '50%',
+  // vHeaderTriggerBorderColor: 'var(--v-g-border-color)',
+  // vHeaderTriggerHoverBgColor: 'var(--v-g-border-color)',
+  // // 侧边栏
+  // // vSiderWidth: '220px', // 侧边栏宽度使用setting设置
+  // // vSiderCollapseWidth: '48px', // 侧边栏宽度使用setting设置
+  // vSiderBg: 'var(--v-g-bg-color)',
+  // vSiderBorderColor: 'var(--v-g-border-color)',
+  // vSiderCollapseBtnColor: 'var(--v-g-text-color-3)',
+  // vSiderCollapseBtnBg: 'var(--v-g-fill-color-1)',
+  // vSiderCollapseBtnBgHover: 'var(--v-g-fill-color-3)',
+  // // menu
+  // vMenuItemHeight: '40px',
+  // vMenuItemBorderRadius: '4px',
+  // vMenuTextColor: 'var(--v-g-text-color)',
+  // vMenuTextHoverColor: 'var(--b-menu-text-color)',
+  // vMenuTextActiveColor: 'var(--bin-color-primary)',
+  // vMenuBgColor: 'var(--v-sider-bg)',
+  // vMenuBgHoverColor: 'var(--bin-color-primary-light6)',
+  // vMenuBgActiveColor: 'var(--bin-color-primary-light6)',
+  // // tags-view
+  // vTagsBgColor: 'var(--v-g-bg-color)',
+  // vTagsBorderColor: 'var(--v-g-border-color)',
+  // vTagsHeight: '32px',
+  // vTagsFontSize: '12px',
+  // vTagsItemBorderRadius: '2px',
+  // vTagsTextColor: 'var(--v-g-text-color)',
+  // vTagsTextHoverColor: 'var(--v-g-text-color)',
+  // vTagsTextActiveColor: 'var(--bin-color-primary)',
+  // vTagsItemBgColor: 'var(--v-g-fill-color-2)',
+  // vTagsItemBgHoverColor: 'var(--v-g-fill-color-2)',
+  // vTagsItemBgActiveColor: 'var(--v-g-fill-color-2)',
+  // vTagsItemBorderColor: 'var(--v-g-fill-color-2)',
+  // vTagsItemBorderHoverColor: 'var(--v-g-fill-color-2)',
+  // vTagsItemBorderActiveColor: 'var(--v-g-fill-color-2)',
+  // // 内容区域
+  // vContentBg: 'var(--v-g-fill-color-2)',
+  // // table
+  // vTableHeaderBg: 'var(--v-g-fill-color-2)',
+  // vTableHeaderText: '#1d2129',
+  // // page
+  // vPageBorderColor: 'transparent',
+  // vPageBg: 'var(--v-g-bg-color)',
+  // vPageHoverBg: 'var(--v-g-fill-color-2)',
+  // vPageActiveBg: 'var(--bin-color-primary-light5)',
 }
 
 // 主题颜色面板

@@ -1,0 +1,91 @@
+/* input 样式 */
+.bin-input,
+.bin-input-number {
+  background-color: var(--v-g-fill-color-2);
+  border: 1px solid transparent;
+  &:hover {
+    background-color: var(--v-g-fill-color-3);
+  }
+  &:focus {
+    background-color: #fff;
+    box-shadow: none;
+  }
+}
+.bin-input[disabled] {
+  color: var(--v-g-fill-color-4);
+  background-color: var(--v-g-fill-color-3);
+}
+
+.bin-input-wrapper:hover .bin-input-icon-clear i {
+  background-color: transparent;
+}
+
+.bin-input-number-focused {
+  background-color: #fff;
+  box-shadow: none;
+  border: 1px solid var(--bin-color-primary);
+}
+
+.bin-input-number-handler {
+  background-color: var(--v-g-fill-color-2);
+  border: none;
+  &.bin-input-number-handler-down,
+  &.bin-input-number-handler-up {
+    border: none;
+    &-disabled {
+      opacity: 0.7;
+    }
+  }
+  &:hover {
+    background-color: var(--v-g-fill-color-3);
+  }
+}
+.bin-input-number-input {
+  background-color: var(--v-g-fill-color-2);
+  border: 1px solid transparent;
+  &:hover {
+    background-color: var(--v-g-fill-color-3);
+    .bin-input-number-handler-down,
+    .bin-input-number-handler-up {
+      background-color: var(--v-g-fill-color-3);
+    }
+  }
+  &:focus {
+    background-color: #fff;
+    box-shadow: none;
+  }
+}
+
+.bin-input-number-always {
+  .bin-input-number-handler-minus,
+  .bin-input-number-handler-plus {
+    border: none;
+  }
+}
+
+.bin-input-word-count {
+  background-color: transparent;
+}
+
+.bin-date-editor {
+  .bin-range-input {
+    background-color: var(--v-g-fill-color-2);
+  }
+  &:hover {
+    background-color: var(--v-g-fill-color-2);
+  }
+
+  &.bin-input.is-active {
+    box-shadow: none;
+    .bin-range-input {
+      background-color: #fff;
+    }
+  }
+}
+
+/* 下拉 */
+.bin-select__caret {
+  &.is-show-close {
+    background-color: transparent;
+  }
+}

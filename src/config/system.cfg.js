@@ -1,4 +1,4 @@
-export const SYSTEM_NAME = '报表系统'
+export const SYSTEM_NAME = '报表设计平台'
 
 export const SYSTEM_KEY = '__EXCEL_PRO__'
 
