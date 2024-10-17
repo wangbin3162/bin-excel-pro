@@ -1,0 +1,4 @@
+.bin-table {
+  --b-table-header-bg: var(--v-table-header-bg);
+  --b-table-header-text: var(--v-table-header-text);
+}
