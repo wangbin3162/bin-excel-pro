@@ -36,3 +36,9 @@ export default defineConfig({
   plugins: [univerPlugin()],
 })
 ```
+
+6、导入导出
+
+```shell
+pnpm add @univerjs-pro/exchange-client @univerjs-pro/sheets-exchange-client
+```

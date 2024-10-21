@@ -22,6 +22,7 @@ import { UniverSheetsPlugin } from '@univerjs/sheets'
 import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula'
 import { UniverSheetsUIPlugin } from '@univerjs/sheets-ui'
 import { zhCN, enUS } from 'univer:locales'
+import { FUniver } from '@univerjs/facade'
 
 /**
  *  Univer实例化对象
@@ -65,6 +66,8 @@ export class UniverPlugin {
     univer.registerPlugin(UniverSheetsPlugin)
     univer.registerPlugin(UniverSheetsUIPlugin)
     univer.registerPlugin(UniverSheetsFormulaPlugin)
+
+    this.univerAPI = FUniver.newAPI(univer)
   }
 
   getInstance() {
@@ -72,7 +75,13 @@ export class UniverPlugin {
   }
 
   destory() {
-    // this.univer?.dispose()
+    if (this.univer) {
+      const activeWorkbook = this.univerAPI.getActiveWorkbook()
+      const unitId = activeWorkbook?.getId()
+      if (unitId) {
+        this.univerAPI.disposeUnit(unitId)
+      }
+    }
     this.univer = null
     this.workbook = null
   }
