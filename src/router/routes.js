@@ -70,6 +70,12 @@ export const routesOutLayout = [
     name: 'Login',
     component: () => import('@/views/system/login.vue'),
   },
+  // excel报表设计
+  {
+    path: '/excel-design',
+    name: 'ExcelDesign',
+    component: () => import('@/views/pages/ExcelDesign/index.vue'),
+  },
 ]
 
 /**

@@ -5,7 +5,7 @@
         <span>{{ title }}</span>
       </slot>
     </div>
-    <div class="right" v-if="$slots.default">
+    <div class="right" v-if="$slots.right">
       <slot name="right"></slot>
     </div>
   </div>

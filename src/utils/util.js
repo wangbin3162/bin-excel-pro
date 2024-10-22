@@ -173,6 +173,6 @@ export function unicodeToStr(str) {
   return String.fromCharCode(...str.split('-'))
 }
 
-export function getNow() {
-  return Utils.util.parseTime(new Date())
+export function getNow(cFormat = '{y}-{m}-{d} {h}:{i}:{s}') {
+  return Utils.util.parseTime(new Date(), cFormat)
 }
