@@ -1,5 +1,5 @@
 import DatasourceCreate from '@/utils/datasource-create'
-import { deepCopy, getUuid } from '@/utils/util'
+import { deepCopy, getUuid, getNow } from '@/utils/util'
 import mockList from '@/views/demo/excel-list/mock'
 
 const Ds = new DatasourceCreate('__UNIVER_DATASOURCE__')
@@ -25,9 +25,9 @@ async function setStoreData(value, key = storeKey) {
   return await Ds.setStorage(key, value)
 }
 
-// --------------------------------escel list-------------------------------- //
+// --------------------------------excel list-------------------------------- //
 // 获取填报列表（excel模板列表）
-export async function getExcelList(query) {
+export async function getReportList(query) {
   const { excelList } = await getDataSource()
   return new Promise(resolve => {
     const { page, size, name, isPublish } = query
@@ -53,8 +53,28 @@ export async function getExcelList(query) {
   })
 }
 
-// 获取填报列表（excel模板列表）
-export async function removeTemplate(id) {
+// 新增
+export async function addReport(data) {
+  const store = await getDataSource()
+
+  return new Promise(resolve => {
+    // 模拟新增一个填报
+    const obj = deepCopy(data)
+    obj.id = getUuid()
+    obj.isPublish = '0'
+
+    obj.createDate = obj.updateDate = getNow()
+    store.excelList.unshift(obj)
+
+    setStoreData(store) // 设置store
+    setTimeout(() => {
+      resolve(obj.id)
+    }, 200)
+  })
+}
+
+// 移除
+export async function removeReport(id) {
   const store = await getDataSource()
 
   return new Promise(resolve => {
@@ -71,7 +91,7 @@ export async function removeTemplate(id) {
 }
 
 // 根据一个id，来获取一个已有的内容
-export async function getTempDetail(id) {
+export async function getReportDetail(id) {
   const store = await getDataSource()
 
   return new Promise(resolve => {
@@ -83,13 +103,14 @@ export async function getTempDetail(id) {
   })
 }
 
-// 修改一个填报表单信息
-export async function modifyTemplate(data) {
+// 修改一个报表信息
+export async function modifyReport(data) {
   const store = await getDataSource()
 
   return new Promise(resolve => {
     const index = store.excelList.findIndex(i => i.id === data.id)
     if (index > -1) {
+      data.updateDate = getNow()
       store.excelList.splice(index, 1, data)
     }
 
@@ -101,8 +122,8 @@ export async function modifyTemplate(data) {
 }
 
 // 发布当前报表
-export async function publishTemplate(id) {
-  const data = await getTempDetail(id)
+export async function publishReport(id) {
+  const data = await getReportDetail(id)
   data.isPublish = '1'
-  return modifyTemplate(data)
+  return modifyReport(data)
 }

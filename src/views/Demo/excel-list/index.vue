@@ -65,11 +65,12 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { onBeforeUnmount, reactive } from 'vue'
 import useTable from '@/hooks/service/useTable'
 import { useRouter } from 'vue-router'
 import { Message } from 'bin-ui-design'
 import * as api from '@/api/modules/excel.api'
+import { listenMsg } from '@/utils/cross-tab-msg'
 
 defineOptions({ name: 'ExcelList' })
 
@@ -85,12 +86,13 @@ const columns = [
   { title: '序号', width: 70, align: 'center', type: 'index' },
   { title: '报表名称', key: 'name' },
   { title: '创建时间', key: 'createDate' },
+  { title: '修改时间', key: 'updateDate' },
   { title: '发布', width: 100, align: 'center', slot: 'isPublish' },
   { title: '操作', width: 180, align: 'center', slot: 'action' },
 ]
 
 const { loading, list, total, handleSearch, getListData, pageChange } = useTable(
-  api.getExcelList,
+  api.getReportList,
   query,
 )
 
@@ -122,7 +124,7 @@ function handleEdit({ id }) {
 
 // 发布模板
 function handlePublish({ id }) {
-  api.publishTemplate(id).then(() => {
+  api.publishReport(id).then(() => {
     Message.success('发布成功！')
     getListData()
   })
@@ -130,11 +132,15 @@ function handlePublish({ id }) {
 
 // 删除
 function handleDelete({ id }) {
-  api.removeTemplate(id).then(() => {
+  api.removeReport(id).then(() => {
     Message.success('删除成功！')
     getListData()
   })
 }
+
+// 监听跨tab页签消息
+const cancelListen = listenMsg(getListData)
+onBeforeUnmount(cancelListen)
 </script>
 
 <style scoped></style>

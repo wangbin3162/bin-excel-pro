@@ -8,11 +8,31 @@
         </b-space>
       </div>
       <div class="right">
-        <b-button type="primary" size="small" icon="login" plain>导入</b-button>
-        <b-button type="primary" size="small" icon="logout" plain @click="download">导出</b-button>
-        <b-divider type="vertical"></b-divider>
-        <b-button type="primary" size="small" icon="save" :loading="btnLoading">保存</b-button>
-        <b-button type="danger" size="small" icon="close" @click="closePage">关闭</b-button>
+        <b-space>
+          <DebugModal :data="excelData" />
+
+          <b-button @click="debugStatus" type="text" text-color="danger">
+            <b-icon name="codelibrary" size="20"></b-icon>
+          </b-button>
+
+          <b-button type="primary" size="small" icon="login" plain @click="importExcel">
+            导入
+          </b-button>
+          <b-button type="primary" size="small" icon="logout" plain @click="download">
+            导出
+          </b-button>
+          <b-divider type="vertical"></b-divider>
+          <b-button
+            type="primary"
+            size="small"
+            icon="save"
+            :loading="btnLoading"
+            @click="saveSheetData"
+          >
+            保存
+          </b-button>
+          <b-button type="danger" size="small" icon="close" @click="closePage">关闭</b-button>
+        </b-space>
       </div>
     </div>
 
@@ -50,10 +70,77 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import useUniver from './useUniver'
+import { toRaw } from 'vue'
+import { Message } from 'bin-ui-design'
+import { useUniverDesign, debugStatus } from './useUniver'
+import { useRouter } from 'vue-router'
+import * as api from '@/api/modules/excel.api'
+import { sendMsg } from '@/utils/cross-tab-msg'
 
-const { containerRef, title, btnLoading, closePage, download } = useUniver()
+const router = useRouter()
+
+const {
+  excelData,
+  containerRef,
+  title,
+  btnLoading,
+  closePage,
+  download,
+  importExcel,
+  setUniverInfo,
+} = useUniverDesign()
+
+function getSaveData() {
+  setUniverInfo()
+  // 组装数据
+  const data = {
+    ...toRaw(excelData.value),
+    jsonData: JSON.stringify({
+      datasetInfo: excelData.value.datasetInfo,
+      univerInfo: excelData.value.univerInfo,
+      config: excelData.value.config,
+    }),
+  }
+  delete data.datasetInfo
+  delete data.univerInfo
+  delete data.config
+  console.log('saveSheetData ========>', excelData.value, data)
+  return data
+}
+
+async function saveSheetData() {
+  try {
+    btnLoading.value = true
+    // 组装数据
+    const data = getSaveData()
+    // 判断是修改还是新增
+    const isCreate = data.id === ''
+    // 新增
+    if (isCreate) {
+      const id = await api.addReport(data)
+      if (id) {
+        Message.success('新增成功!')
+        sendMsg('add-temp', { ...data })
+        excelData.value.id = id
+        excelData.value.reportCount = excelData.value.records = 0
+        excelData.value.isPublish = '0'
+        let routeData = router.resolve({
+          path: '/excel-design',
+          query: { id },
+        })
+        window.location.replace(routeData.href)
+      }
+    } else {
+      // 修改
+      await api.modifyReport(data)
+      Message.success('修改成功!')
+      sendMsg('modify-temp', { ...data })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  btnLoading.value = false
+}
 </script>
 
 <style scoped>

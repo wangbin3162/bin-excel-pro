@@ -126,10 +126,20 @@ export class UniverPlugin {
     return this.univer
   }
 
+  // 移除
   destory() {
-    this.univer?.dispose()
+    this.destoryWorkbook()
     this.univer = null
     this.workbook = null
+  }
+
+  // 销毁工作簿
+  destoryWorkbook() {
+    const activeWorkbook = this.univerAPI.getActiveWorkbook()
+    const unitId = activeWorkbook && activeWorkbook.getId()
+    if (unitId) {
+      this.univerAPI.disposeUnit(unitId)
+    }
   }
 
   /**
@@ -145,7 +155,7 @@ export class UniverPlugin {
   getWorkBook() {
     const activeWorkbook = this.univerAPI.getActiveWorkbook()
     const saveData = activeWorkbook.save()
-    console.log('activeWorkBook ========>', saveData)
+    console.log('ActiveWorkBook ========>', saveData)
     return saveData
   }
 

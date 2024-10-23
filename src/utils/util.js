@@ -12,6 +12,8 @@ export const deepCopy = Utils.util.deepCopy
 
 export const deepMerge = Utils.util.deepMerge
 
+export const parseTime = Utils.util.parseTime
+
 export const throttle = Utils.util.throttle
 
 export const debounce = Utils.util.debounce

@@ -10,15 +10,14 @@ const workbookData = {
     sheet1: {
       id: 'sheet1',
       name: 'Sheet1',
-      // freeze: { xSplit: 1, ySplit: 1, startRow: -1, startColumn: -1 },
-      freeze: { xSplit: 1, ySplit: 1, startRow: 1, startColumn: 1 },
+      // freeze: { xSplit: 1, ySplit: 1, startRow: 1, startColumn: 1 },
       rowCount: 400,
       cellData: {
-        0: {
-          0: {
-            v: 123,
-          },
-        },
+        // 0: {
+        //   0: {
+        //     v: '测试',
+        //   },
+        // },
       },
     },
   },
