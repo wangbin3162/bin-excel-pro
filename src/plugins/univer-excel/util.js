@@ -17,6 +17,13 @@ export function getLetter(cellKey, rowKey) {
   return letter
 }
 
+/**
+ * 根据插件名称获取当前sheet的配置
+ * @param {*} resources   //插件资源
+ * @param {*} sheetId     // 当前sheet的id
+ * @param {*} pluginName  //插件名称
+ * @returns
+ */
 export function getCurrentSheetPlugin(resources, sheetId, pluginName) {
   const plugin = resources.find(item => item.name === pluginName)
   if (!plugin) {
@@ -40,4 +47,17 @@ export function getCurrentSheetPlugin(resources, sheetId, pluginName) {
     console.log('====>插件json转换错误', error)
     return null
   }
+}
+
+export function getCellsByRange(range) {
+  const { startRow, startColumn, endRow, endColumn } = range
+
+  const cells = []
+
+  for (let row = startRow; row <= endRow; row++) {
+    for (let col = startColumn; col <= endColumn; col++) {
+      cells.push({ row, col })
+    }
+  }
+  return cells
 }

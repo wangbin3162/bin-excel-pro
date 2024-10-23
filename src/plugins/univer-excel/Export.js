@@ -1,7 +1,7 @@
 import { getNow } from '@/utils/util'
 import Excel from 'exceljs'
 import FileSaver from 'file-saver'
-import { getLetter, getCurrentSheetPlugin } from './util'
+import { getLetter, getCurrentSheetPlugin, getCellsByRange } from './util'
 
 const downloadFile = true
 
@@ -42,7 +42,6 @@ export function exportExcel(workbookData) {
       setStyleAndValue(sheet.cellData, worksheet, workbookData.styles)
       setMerge(mergeData, worksheet) //合并单元格
       setBorder(sheet.cellData, worksheet, workbookData.styles)
-
       setImages(workbookData.resources, sheet.id, worksheet, workbook)
       setColumnWidth(columnData, worksheet) //设置列宽
       setRowHeight(rowData, worksheet) //设置行高
@@ -50,6 +49,7 @@ export function exportExcel(workbookData) {
       setRowHidden(rowData, worksheet) //设置行隐藏
       setColHidden(columnData, worksheet) //设置列隐藏
       setFilter(workbookData.resources, sheet.id, worksheet) //设置筛选
+      setDataValidation(workbookData.resources, sheet.id, worksheet)
       return true
     })
 
@@ -277,6 +277,57 @@ const setFilter = (resources, sheetId, worksheet) => {
     from: from,
     to: to,
   }
+}
+
+const setDataValidation = (resources, sheetId, worksheet) => {
+  const dataValidation = getCurrentSheetPlugin(resources, sheetId, 'SHEET_DATA_VALIDATION_PLUGIN')
+  if (!dataValidation) return
+  console.log('dataValidation ========>', dataValidation)
+
+  dataValidation.forEach(item => {
+    const { formula1, formula2, type, ranges } = item
+
+    ranges.forEach(range => {
+      const cells = getCellsByRange(range)
+      cells.forEach(cell => {
+        const letter = getLetter(cell.col, cell.row)
+        const target = worksheet.getCell(letter)
+        if (type === 'list') {
+          const formulae = formula2 === '' ? [convertRange(formula1.slice(1))] : [`"${formula1}"`]
+          target.dataValidation = {
+            type,
+            allowBlank: true,
+            formulae: formulae,
+          }
+        }
+        if (type === 'whole') {
+          target.dataValidation = {
+            type,
+            operator: item.operator,
+            formulae: [+formula1],
+            error: item.error || '',
+            showErrorMessage: item.showErrorMessage || false,
+          }
+        }
+        if (type === 'decimal' || type === 'textLength') {
+          target.dataValidation = {
+            type,
+            operator: item.operator,
+            formulae:
+              item.operator === 'between' || item.operator === 'notBetween'
+                ? [+formula1, +formula2]
+                : [+formula1],
+            error: item.error || '',
+            showErrorMessage: item.showErrorMessage || false,
+          }
+        }
+      })
+    })
+  })
+}
+
+function convertRange(range) {
+  return `$${range.replace(/(\w)(\d+)/g, (match, letter, number) => `${letter}$${number}`)}`
 }
 
 function borderConvert(bd) {
