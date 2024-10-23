@@ -282,7 +282,7 @@ const setFilter = (resources, sheetId, worksheet) => {
 const setDataValidation = (resources, sheetId, worksheet) => {
   const dataValidation = getCurrentSheetPlugin(resources, sheetId, 'SHEET_DATA_VALIDATION_PLUGIN')
   if (!dataValidation) return
-  console.log('dataValidation ========>', dataValidation)
+  // console.log('dataValidation ========>', dataValidation)
 
   dataValidation.forEach(item => {
     const { formula1, formula2, type, ranges } = item
