@@ -20,8 +20,6 @@ const workbookData = {
           },
         },
       },
-      rowData: [],
-      columnData: [],
     },
   },
 }

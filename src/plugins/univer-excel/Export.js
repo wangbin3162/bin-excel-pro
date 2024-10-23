@@ -41,6 +41,8 @@ export function exportExcel(workbookData) {
       setStyleAndValue(sheet.cellData, worksheet, workbookData.styles)
       setMerge(mergeData, worksheet) //合并单元格
       setBorder(sheet.cellData, worksheet, workbookData.styles)
+
+      setImages(workbookData.resources, sheet.id, worksheet, workbook)
       setColumnWidth(columnData, worksheet) //设置列宽
       setRowHeight(rowData, worksheet) //设置行高
       setFrozen(frozen, worksheet) //设置冻结
@@ -105,10 +107,11 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
  * @param {*} worksheet
  */
 const setColumnWidth = (columnData, worksheet) => {
-  columnData.forEach((col, i) => {
-    console.log('col', col)
-    worksheet.getColumn(i + 1).width = col.w * WIDTH_RATIO
-  })
+  for (const colkey in columnData) {
+    const colIndex = +colkey
+    const col = columnData[colkey]
+    worksheet.getColumn(colIndex + 1).width = col.w * WIDTH_RATIO
+  }
 }
 
 /**
@@ -117,9 +120,11 @@ const setColumnWidth = (columnData, worksheet) => {
  * @param worksheet
  */
 const setColHidden = (columnData = [], worksheet) => {
-  columnData.forEach((col, i) => {
-    if (col.hd === 1) worksheet.getColumn(i + 1).hidden = true
-  })
+  for (const colkey in columnData) {
+    const colIndex = +colkey
+    const col = columnData[colkey]
+    if (col.hd === 1) worksheet.getColumn(colIndex + 1).hidden = true
+  }
 }
 
 /**
@@ -128,9 +133,11 @@ const setColHidden = (columnData = [], worksheet) => {
  * @param worksheet
  */
 const setRowHidden = (rowData = [], worksheet) => {
-  rowData.forEach((row, i) => {
-    if (row.hd === 1) worksheet.getRow(i + 1).hidden = true
-  })
+  for (const rowkey in rowData) {
+    const rowIndex = +rowkey
+    const row = rowData[rowkey]
+    if (row.hd === 1) worksheet.getRow(rowIndex + 1).hidden = true
+  }
 }
 
 /**
@@ -140,11 +147,13 @@ const setRowHidden = (rowData = [], worksheet) => {
  * @param {*}excelType 导出类型 office:excel  wps: wps
  */
 const setRowHeight = (rowData, worksheet, excelType = 'wps') => {
-  //导出的文件用wps打开和用excel打开显示的行高大一倍
-  rowData.forEach((row, i) => {
+  for (const rowkey in rowData) {
+    const rowIndex = +rowkey
+    const row = rowData[rowkey]
+    //导出的文件用wps打开和用excel打开显示的行高大一倍
     const ratio = excelType === 'wps' ? HEIGHT_RATIO : WIDTH_RATIO * 2
-    worksheet.getRow(i + 1).height = row.h * ratio
-  })
+    worksheet.getRow(rowIndex + 1).height = row.h * ratio
+  }
 }
 
 /**
@@ -212,6 +221,45 @@ const setBorder = (cellData, worksheet, styles) => {
       }
     })
   })
+}
+
+/**
+ * 设置图片
+ * @param resources 所有资源
+ * @param sheetId 当前的sheetid
+ * @param worksheet 当前工作表
+ * @param workbook 当前工作簿
+ */
+const setImages = function (resources, sheetId, worksheet, workbook) {
+  const drawing = resources.find(item => item.name === 'SHEET_DRAWING_PLUGIN')
+  if (!drawing) return
+  try {
+    const images = JSON.parse(drawing.data)
+    if (!images || Object.keys(images).length === 0) return
+    const currentImages = images[sheetId]
+    if (!currentImages) return
+    // console.log('currentImages ========>', currentImages, worksheet, workbook)
+    const currentImageData = currentImages.data || {}
+    for (let id in currentImageData) {
+      const image = currentImageData[id]
+      const base64Image = image.source
+      //位置
+      const tl = { col: image.transform.left / 72, row: image.transform.top / 19 }
+      // 大小
+      const ext = { width: image.transform.width, height: image.transform.height }
+      const imageId = workbook.addImage({
+        base64: base64Image,
+        //extension: 'png',
+      })
+      worksheet.addImage(imageId, {
+        tl: tl,
+        ext: ext,
+      })
+      // console.log('image ========>', image)
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 function borderConvert(bd) {
