@@ -1,6 +1,7 @@
 import { getNow } from '@/utils/util'
 import Excel from 'exceljs'
 import FileSaver from 'file-saver'
+import { getLetter, getCurrentSheetPlugin } from './util'
 
 const downloadFile = true
 
@@ -48,6 +49,7 @@ export function exportExcel(workbookData) {
       setFrozen(frozen, worksheet) //设置冻结
       setRowHidden(rowData, worksheet) //设置行隐藏
       setColHidden(columnData, worksheet) //设置列隐藏
+      setFilter(workbookData.resources, sheet.id, worksheet) //设置筛选
       return true
     })
 
@@ -84,7 +86,7 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
       // 获取单元格
       const cell = row[cellKey]
       const style = styles[cell.s] || {}
-      let letter = createCellPos(cellKey) + (+rowKey + 1)
+      let letter = getLetter(cellKey, rowKey)
       let target = worksheet.getCell(letter)
       // console.log(`cell ========>[${letter}]`, cell, style)
 
@@ -206,7 +208,7 @@ const setBorder = (cellData, worksheet, styles) => {
       // 获取单元格
       const cell = row[cellKey]
       const style = styles[cell.s] || {}
-      let letter = createCellPos(cellKey) + (row_index + 1)
+      let letter = getLetter(cellKey, rowKey)
       let target = worksheet.getCell(letter)
 
       if (style.bd && Object.keys(style.bd).length) {
@@ -230,35 +232,50 @@ const setBorder = (cellData, worksheet, styles) => {
  * @param worksheet 当前工作表
  * @param workbook 当前工作簿
  */
-const setImages = function (resources, sheetId, worksheet, workbook) {
-  const drawing = resources.find(item => item.name === 'SHEET_DRAWING_PLUGIN')
-  if (!drawing) return
-  try {
-    const images = JSON.parse(drawing.data)
-    if (!images || Object.keys(images).length === 0) return
-    const currentImages = images[sheetId]
-    if (!currentImages) return
-    // console.log('currentImages ========>', currentImages, worksheet, workbook)
-    const currentImageData = currentImages.data || {}
-    for (let id in currentImageData) {
-      const image = currentImageData[id]
-      const base64Image = image.source
-      //位置
-      const tl = { col: image.transform.left / 72, row: image.transform.top / 19 }
-      // 大小
-      const ext = { width: image.transform.width, height: image.transform.height }
-      const imageId = workbook.addImage({
-        base64: base64Image,
-        //extension: 'png',
-      })
-      worksheet.addImage(imageId, {
-        tl: tl,
-        ext: ext,
-      })
-      // console.log('image ========>', image)
-    }
-  } catch (error) {
-    console.log(error)
+const setImages = (resources, sheetId, worksheet, workbook) => {
+  const currentImages = getCurrentSheetPlugin(resources, sheetId, 'SHEET_DRAWING_PLUGIN')
+  if (!currentImages) return
+  // console.log('currentImages ========>', currentImages, worksheet, workbook)
+  const currentImageData = currentImages.data || {}
+  for (let id in currentImageData) {
+    const image = currentImageData[id]
+    const base64Image = image.source
+    //位置
+    const tl = { col: image.transform.left / 72, row: image.transform.top / 19 }
+    // 大小
+    const ext = { width: image.transform.width, height: image.transform.height }
+    const imageId = workbook.addImage({
+      base64: base64Image,
+      //extension: 'png',
+    })
+    worksheet.addImage(imageId, {
+      tl: tl,
+      ext: ext,
+    })
+    // console.log('image ========>', image)
+  }
+}
+
+/**
+ * 自动筛选器
+ */
+const setFilter = (resources, sheetId, worksheet) => {
+  const filter = getCurrentSheetPlugin(resources, sheetId, 'SHEET_FILTER_PLUGIN')
+  if (!filter || !filter.ref) return
+  // console.log('filter ========>', filter)
+  const from = {
+    row: filter.ref.startRow + 1,
+    column: filter.ref.startColumn + 1,
+  }
+
+  const to = {
+    row: filter.ref.endRow + 1,
+    column: filter.ref.endColumn + 1,
+  }
+
+  worksheet.autoFilter = {
+    from: from,
+    to: to,
   }
 }
 
@@ -461,16 +478,4 @@ function colorRGBtoHex(color) {
 
 function color2Hex(color) {
   return color.startsWith('#') ? color.replace('#', '') : colorRGBtoHex(color).replace('#', '')
-}
-
-function createCellPos(n) {
-  let ordA = 'A'.charCodeAt(0)
-  let ordZ = 'Z'.charCodeAt(0)
-  let len = ordZ - ordA + 1
-  let s = ''
-  while (n >= 0) {
-    s = String.fromCharCode((n % len) + ordA) + s
-    n = Math.floor(n / len) - 1
-  }
-  return s
 }
