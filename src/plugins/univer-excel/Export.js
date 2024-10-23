@@ -39,8 +39,8 @@ export function exportExcel(workbookData) {
       }
 
       setStyleAndValue(sheet.cellData, worksheet, workbookData.styles)
-      setBorder(sheet.cellData, worksheet, workbookData.styles)
       setMerge(mergeData, worksheet) //合并单元格
+      setBorder(sheet.cellData, worksheet, workbookData.styles)
       setColumnWidth(columnData, worksheet) //设置列宽
       setRowHeight(rowData, worksheet) //设置行高
       setFrozen(frozen, worksheet) //设置冻结
@@ -99,23 +99,116 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
   })
 }
 
+/**
+ * 列宽
+ * @param {*} columnWidth
+ * @param {*} worksheet
+ */
+const setColumnWidth = (columnData, worksheet) => {
+  columnData.forEach((col, i) => {
+    console.log('col', col)
+    worksheet.getColumn(i + 1).width = col.w * WIDTH_RATIO
+  })
+}
+
+/**
+ * 列隐藏
+ * @param columnData
+ * @param worksheet
+ */
+const setColHidden = (columnData = [], worksheet) => {
+  columnData.forEach((col, i) => {
+    if (col.hd === 1) worksheet.getColumn(i + 1).hidden = true
+  })
+}
+
+/**
+ * 行隐藏
+ * @param rowData
+ * @param worksheet
+ */
+const setRowHidden = (rowData = [], worksheet) => {
+  rowData.forEach((row, i) => {
+    if (row.hd === 1) worksheet.getRow(i + 1).hidden = true
+  })
+}
+
+/**
+ * 行高
+ * @param {*}rowData  行数据
+ * @param {*} worksheet 工作表
+ * @param {*}excelType 导出类型 office:excel  wps: wps
+ */
+const setRowHeight = (rowData, worksheet, excelType = 'wps') => {
+  //导出的文件用wps打开和用excel打开显示的行高大一倍
+  rowData.forEach((row, i) => {
+    const ratio = excelType === 'wps' ? HEIGHT_RATIO : WIDTH_RATIO * 2
+    worksheet.getRow(i + 1).height = row.h * ratio
+  })
+}
+
+/**
+ * 冻结行列
+ * @param frozen
+ * @param worksheet
+ */
+const setFrozen = (frozen = {}, worksheet) => {
+  worksheet.views = [{ state: 'frozen', ...frozen }]
+}
+
+/**
+ * 合并单元格
+ * @param {*} mergeData
+ * @param {*} worksheet
+ */
+const setMerge = (mergeData = [], worksheet) => {
+  mergeData.forEach(merge => {
+    // elem格式：{startRow, startColumn, endRow,endColumn, cs: 2}
+    const { startRow, startColumn, endRow, endColumn } = merge
+    // 按开始行，开始列，结束行，结束列合并（相当于 K10:M12）
+    worksheet.mergeCells(startRow + 1, startColumn + 1, endRow + 1, endColumn + 1)
+  })
+}
+
+/**
+ * 设置边框
+ * @param {*} cellData
+ * @param {*} worksheet
+ * @param {*} styles
+ * @returns
+ */
 const setBorder = (cellData, worksheet, styles) => {
   const cellKeys = Object.keys(cellData)
   if (cellKeys.length === 0) return
+
+  //合并边框信息
+  let mergeCellBorder = function (border1, border2) {
+    if (undefined === border1 || Object.keys(border1).length === 0) return border2
+    return Object.assign({}, border1, border2)
+  }
+
   // 遍历行
   cellKeys.forEach(rowKey => {
     const row = cellData[rowKey]
     // 遍历列
     Object.keys(row).forEach(cellKey => {
+      const row_index = +rowKey
+      const col_index = +cellKey
       // 获取单元格
       const cell = row[cellKey]
       const style = styles[cell.s] || {}
-      let letter = createCellPos(cellKey) + (+rowKey + 1)
+      let letter = createCellPos(cellKey) + (row_index + 1)
       let target = worksheet.getCell(letter)
+
       if (style.bd && Object.keys(style.bd).length) {
-        console.log(`setBorder ========>[${letter}]`, cell, style)
         const border = borderConvert(style.bd)
-        if (border) target.border = border
+
+        if (border) {
+          let border1 = worksheet.getCell(row_index + 1, col_index + 1).border
+          // console.log(`setBorder ========>[${letter}]`, cell, style, border)
+          // target.border = border
+          target.border = mergeCellBorder(border1, border)
+        }
       }
     })
   })
@@ -193,77 +286,6 @@ function borderConvert(bd) {
   if (Object.keys(border).length === 0) return null
 
   return border
-}
-
-/**
- * 列宽
- * @param {*} columnWidth
- * @param {*} worksheet
- */
-const setColumnWidth = (columnData, worksheet) => {
-  columnData.forEach((col, i) => {
-    console.log('col', col)
-    worksheet.getColumn(i + 1).width = col.w * WIDTH_RATIO
-  })
-}
-
-/**
- * 列隐藏
- * @param columnData
- * @param worksheet
- */
-const setColHidden = (columnData = [], worksheet) => {
-  columnData.forEach((col, i) => {
-    if (col.hd === 1) worksheet.getColumn(i + 1).hidden = true
-  })
-}
-
-/**
- * 行隐藏
- * @param rowData
- * @param worksheet
- */
-const setRowHidden = (rowData = [], worksheet) => {
-  rowData.forEach((row, i) => {
-    if (row.hd === 1) worksheet.getRow(i + 1).hidden = true
-  })
-}
-
-/**
- * 行高
- * @param {*}rowData  行数据
- * @param {*} worksheet 工作表
- * @param {*}excelType 导出类型 office:excel  wps: wps
- */
-const setRowHeight = (rowData, worksheet, excelType = 'wps') => {
-  //导出的文件用wps打开和用excel打开显示的行高大一倍
-  rowData.forEach((row, i) => {
-    const ratio = excelType === 'wps' ? HEIGHT_RATIO : WIDTH_RATIO * 2
-    worksheet.getRow(i + 1).height = row.h * ratio
-  })
-}
-
-/**
- * 冻结行列
- * @param frozen
- * @param worksheet
- */
-const setFrozen = (frozen = {}, worksheet) => {
-  worksheet.views = [{ state: 'frozen', ...frozen }]
-}
-
-/**
- * 合并单元格
- * @param {*} mergeData
- * @param {*} worksheet
- */
-const setMerge = (mergeData = [], worksheet) => {
-  mergeData.forEach(merge => {
-    // elem格式：{startRow, startColumn, endRow,endColumn, cs: 2}
-    const { startRow, startColumn, endRow, endColumn } = merge
-    // 按开始行，开始列，结束行，结束列合并（相当于 K10:M12）
-    worksheet.mergeCells(startRow + 1, startColumn + 1, endRow + 1, endColumn + 1)
-  })
 }
 
 // 根据数据格式类型或者富文本来设置值
