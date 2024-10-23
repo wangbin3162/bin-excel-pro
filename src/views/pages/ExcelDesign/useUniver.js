@@ -2,6 +2,7 @@ import { ref, toRaw, computed, onMounted, onBeforeUnmount } from 'vue'
 import { MessageBox } from 'bin-ui-design'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
+import { setDatasetList } from '@/plugins/univer-excel/Dataset'
 
 const status = {
   excelData: ref({
@@ -32,14 +33,14 @@ export function useUniverStatus() {
       excelData.value = {
         id: '',
         name: '新的报表', // 报表名称
-        datasetInfo: {}, // 数据集信息
+        datasetInfo: { list: setDatasetList() }, // 数据集信息
         univerInfo: newWorkbook({ name: '新的报表' }), // 存储的信息
         config: {}, // 全局配置
       }
       console.log('---------------新建设计--------------------', excelData.value)
     } else {
       excelData.value = {
-        datasetInfo: {}, // 数据集信息
+        datasetInfo: { list: [] }, // 数据集信息
         config: {}, // 全局配置
         univerInfo: newWorkbook(), // 存储的信息
         ...data,
@@ -49,7 +50,7 @@ export function useUniverStatus() {
         const jsonObj = JSON.parse(data.jsonData)
         if (Object.keys(jsonObj).length === 0) return
         // 数据集和配置，需要按照一定规则进行基础合并merge
-        excelData.value.datasetInfo = jsonObj.datasetInfo
+        excelData.value.datasetInfo.list = setDatasetList(jsonObj.datasetInfo.list)
         excelData.value.config = jsonObj.config
         // univerInfo 从保存的内容中进行获取
         excelData.value.univerInfo = jsonObj.univerInfo

@@ -48,7 +48,7 @@
 
         <div class="body-content">
           <b-scrollbar>
-            <div class="p8">left-content</div>
+            <div class="p8">{{ excelData.datasetInfo }}</div>
           </b-scrollbar>
         </div>
       </div>
