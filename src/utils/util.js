@@ -1,39 +1,57 @@
 import { Utils, Notice } from 'bin-ui-design'
 
+// 生成唯一id
 export const generateId = Utils.helper.generateId
 
+// 生成uuid
 export const getUuid = Utils.util.uuid
 
+// 复制文本
 export const copyText = Utils.util.copy
 
+// 获取数据类型
 export const typeOf = Utils.util.typeOf
 
+// 深度拷贝
 export const deepCopy = Utils.util.deepCopy
 
+// 深度合并
 export const deepMerge = Utils.util.deepMerge
 
+// 解析时间
 export const parseTime = Utils.util.parseTime
 
+// 节流
 export const throttle = Utils.util.throttle
 
+// 防抖
 export const debounce = Utils.util.debounce
 
+// 判断两个对象是否相等
 export const isEqual = Utils.util.isEqual
 
+// 判断对象是否为空
 export const isEmpty = Utils.helper.isEmpty
 
+// 绑定事件
 export const on = Utils.dom.on
 
+// 解绑事件
 export const off = Utils.dom.off
 
+// 滚动到顶部
 export const scrollTop = Utils.dom.scrollTop
 
+// 添加类名
 export const addClass = Utils.dom.addClass
 
+// 移除类名
 export const removeClass = Utils.dom.removeClass
 
+// 添加resize监听
 export const addResizeListener = Utils.resize.addResizeListener
 
+// 移除resize监听
 export const removeResizeListener = Utils.resize.removeResizeListener
 
 /**
@@ -177,4 +195,30 @@ export function unicodeToStr(str) {
 
 export function getNow(cFormat = '{y}-{m}-{d} {h}:{i}:{s}') {
   return Utils.util.parseTime(new Date(), cFormat)
+}
+
+/**
+ * 从json字符串中获取数据
+ * @param jsonStr json字符串
+ * @param defaultValue 默认值，必须填写，用于初始化失败的时候使用
+ * @returns {any} // 返回json字符串中的数据
+ */
+export function fromJson(jsonStr, defaultValue) {
+  // 如果jsonStr不存在或者jsonStr的长度为0或者jsonStr的类型不是字符串，则返回defaultValue
+  if (!jsonStr || typeOf(jsonStr) !== 'string' || !jsonStr.length) return defaultValue
+  try {
+    return JSON.parse(jsonStr)
+  } catch {
+    return defaultValue
+  }
+}
+
+/**
+ * 转换为json字符串
+ * @param {*} obj 对象
+ * @param {*} format 是否格式化
+ * @returns json字符串
+ */
+export function toJson(obj, format = false) {
+  return format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj)
 }

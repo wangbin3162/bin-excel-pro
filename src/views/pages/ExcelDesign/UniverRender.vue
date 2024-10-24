@@ -48,7 +48,7 @@
 
         <div class="body-content">
           <b-scrollbar>
-            <div class="p8">{{ excelData.datasetInfo }}</div>
+            <DatasetConfig />
           </b-scrollbar>
         </div>
       </div>
@@ -76,6 +76,8 @@ import { useUniverDesign, debugStatus } from './useUniver'
 import { useRouter } from 'vue-router'
 import * as api from '@/api/modules/excel.api'
 import { sendMsg } from '@/utils/cross-tab-msg'
+import DatasetConfig from './DatasetConfig.vue'
+import { toJson } from '@/utils/util'
 
 const router = useRouter()
 
@@ -95,15 +97,10 @@ function getSaveData() {
   // 组装数据
   const data = {
     ...toRaw(excelData.value),
-    jsonData: JSON.stringify({
-      datasetInfo: excelData.value.datasetInfo,
-      univerInfo: excelData.value.univerInfo,
-      config: excelData.value.config,
-    }),
+    datasetInfo: toJson(excelData.value.datasetInfo),
+    univerInfo: toJson(excelData.value.univerInfo),
+    config: toJson(excelData.value.config),
   }
-  delete data.datasetInfo
-  delete data.univerInfo
-  delete data.config
   console.log('saveSheetData ========>', excelData.value, data)
   return data
 }

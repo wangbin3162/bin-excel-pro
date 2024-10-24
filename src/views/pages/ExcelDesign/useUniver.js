@@ -3,6 +3,7 @@ import { MessageBox } from 'bin-ui-design'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
 import { setDatasetList } from '@/plugins/univer-excel/Dataset'
+import { fromJson } from '@/utils/util'
 
 const status = {
   excelData: ref({
@@ -40,25 +41,23 @@ export function useUniverStatus() {
       console.log('---------------新建设计--------------------', excelData.value)
     } else {
       excelData.value = {
-        datasetInfo: { list: [] }, // 数据集信息
-        config: {}, // 全局配置
-        univerInfo: newWorkbook(), // 存储的信息
         ...data,
+        datasetInfo: {},
+        univerInfo: newWorkbook(),
+        config: {},
       }
-      try {
-        if (data.jsonData === '') return
-        const jsonObj = JSON.parse(data.jsonData)
-        if (Object.keys(jsonObj).length === 0) return
-        // 数据集和配置，需要按照一定规则进行基础合并merge
-        excelData.value.datasetInfo.list = setDatasetList(jsonObj.datasetInfo.list)
-        excelData.value.config = jsonObj.config
-        // univerInfo 从保存的内容中进行获取
-        excelData.value.univerInfo = jsonObj.univerInfo
-        excelData.value.jsonData = ''
-        console.log('---------------修改设计--------------------', excelData.value)
-      } catch (error) {
-        console.log(error)
-      }
+
+      // 数据集和配置，需要按照一定规则进行基础合并merge
+      const dsInfo = fromJson(data.datasetInfo, {})
+      excelData.value.datasetInfo.list = setDatasetList(dsInfo.list || [])
+      // config
+      const config = fromJson(data.config, {})
+      excelData.value.config = config
+      //  univerInfo
+      const univerInfo = fromJson(data.univerInfo, {})
+      excelData.value.univerInfo = univerInfo
+
+      console.log('---------------修改设计--------------------', excelData.value)
     }
   }
 
