@@ -37,21 +37,7 @@
     </div>
 
     <div class="sheet-body">
-      <div class="left-dataset">
-        <div class="title-top">
-          <TitleBar title="数据集" tip-pos="left" :titleStyle="{ fontSize: '14px' }">
-            <template #right>
-              <b-button type="text" icon="plus" style="margin-right: 5px" />
-            </template>
-          </TitleBar>
-        </div>
-
-        <div class="body-content">
-          <b-scrollbar>
-            <DatasetConfig />
-          </b-scrollbar>
-        </div>
-      </div>
+      <DatasetConfig />
 
       <div id="SheetContainer" class="sheet-excel has-config" ref="containerRef"></div>
 
@@ -160,10 +146,6 @@ async function saveSheetData() {
     display: flex;
     width: 100%;
     height: calc(100% - 50px);
-    .left-dataset {
-      width: var(--v-left-width);
-      border-right: 1px solid #f0f0f0;
-    }
     .sheet-excel {
       width: calc(100% - var(--v-left-width) - var(--v-right-width));
     }

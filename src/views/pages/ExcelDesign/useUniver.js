@@ -4,6 +4,7 @@ import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
 import { setDatasetList } from '@/plugins/univer-excel/Dataset'
 import { fromJson } from '@/utils/util'
+import { getLetter } from '@/plugins/univer-excel/util'
 
 const status = {
   excelData: ref({
@@ -79,7 +80,30 @@ export function useUniverDesign() {
   onMounted(() => {
     univer = UniverPlugin.init(containerRef.value)
     univer.createSheet(excelData.value.univerInfo)
+    // 监听放置功能
+    univer.univerAPI.getSheetHooks().onCellDrop(sellDrop)
   })
+
+  // 单元格放置事件
+  function sellDrop({ dataTransfer, location }) {
+    // console.log(dataTransfer, location, position)
+    const drop = dataTransfer.getData('field')
+    if (!drop) return
+    const { dataset, field } = fromJson(drop, {})
+    // 组装数据，根据是否是列表型 列表组装为#{}，非列表组装为${}
+    const value = dataset.isList
+      ? `#{${dataset.code}.${field.fieldName}}`
+      : '$' + `{${dataset.code}.${field.fieldName}}`
+    // console.log('dropData ========>', dataset, field, value)
+    // 设置单元格的值
+    const { col, row } = location
+    const letter = getLetter(col, row)
+    console.log(`location ========>[${letter}]`, location)
+    const sheet = univer.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = sheet.getRange(letter)
+    range.setValue(value)
+    range.setWrapStrategy(2)
+  }
 
   onBeforeUnmount(() => {
     univer?.destory()
