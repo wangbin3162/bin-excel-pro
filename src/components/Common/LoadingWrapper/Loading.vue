@@ -37,6 +37,7 @@ defineProps({
     default: false,
   },
 })
+defineOptions({ name: 'LoadingWrapper' })
 </script>
 
 <style scoped>

@@ -1,9 +1,9 @@
 import { ref, toRaw, computed, onMounted, onBeforeUnmount } from 'vue'
 import { MessageBox } from 'bin-ui-design'
+import { fromJson } from '@/utils/util'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
-import { setDatasetList } from '@/plugins/univer-excel/Dataset'
-import { fromJson } from '@/utils/util'
+import { setDatasetList } from '@/views/pages/ExcelDesign/useDataset'
 import { getLetter } from '@/plugins/univer-excel/util'
 
 const status = {
@@ -75,7 +75,6 @@ export function useUniverDesign() {
   let univer = null
   const containerRef = ref(null)
   const btnLoading = ref(false)
-  const isMaskShow = ref(false)
 
   onMounted(() => {
     univer = UniverPlugin.init(containerRef.value)
@@ -97,7 +96,7 @@ export function useUniverDesign() {
     // console.log('dropData ========>', dataset, field, value)
     // 设置单元格的值
     const { col, row } = location
-    const letter = getLetter(col, row)
+    const letter = getLetter(row, col)
     console.log(`location ========>[${letter}]`, location)
     const sheet = univer.univerAPI.getActiveWorkbook().getActiveSheet()
     const range = sheet.getRange(letter)
@@ -145,7 +144,6 @@ export function useUniverDesign() {
     containerRef,
     title,
     btnLoading,
-    isMaskShow,
     closePage,
     download,
     setUniverInfo,

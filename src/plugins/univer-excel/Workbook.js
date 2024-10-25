@@ -11,6 +11,7 @@ const workbookData = {
       id: 'sheet1',
       name: 'Sheet1',
       // freeze: { xSplit: 1, ySplit: 1, startRow: 1, startColumn: 1 },
+      columnCount: 26,
       rowCount: 200,
       cellData: {
         // 0: {

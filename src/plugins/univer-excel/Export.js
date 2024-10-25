@@ -20,7 +20,7 @@ export function exportExcel(workbookData) {
     Object.keys(workbookData.sheets).forEach(key => {
       // 获取每一个sheet
       const sheet = workbookData.sheets[key]
-      console.log(sheet)
+      // console.log(sheet)
       // 2.创建工作表
       const worksheet = workbook.addWorksheet(sheet.name)
 
@@ -86,7 +86,7 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
       // 获取单元格
       const cell = row[cellKey]
       const style = styles[cell.s] || {}
-      let letter = getLetter(cellKey, rowKey)
+      let letter = getLetter(rowKey, cellKey)
       let target = worksheet.getCell(letter)
       // console.log(`cell ========>[${letter}]`, cell, style)
 
@@ -164,6 +164,7 @@ const setRowHeight = (rowData, worksheet, excelType = 'wps') => {
  * @param worksheet
  */
 const setFrozen = (frozen = {}, worksheet) => {
+  if (!frozen || frozen.startRow === -1 || frozen.startColumn === -1) return
   worksheet.views = [{ state: 'frozen', ...frozen }]
 }
 
@@ -208,7 +209,7 @@ const setBorder = (cellData, worksheet, styles) => {
       // 获取单元格
       const cell = row[cellKey]
       const style = styles[cell.s] || {}
-      let letter = getLetter(cellKey, rowKey)
+      let letter = getLetter(rowKey, cellKey)
       let target = worksheet.getCell(letter)
 
       if (style.bd && Object.keys(style.bd).length) {
@@ -279,6 +280,7 @@ const setFilter = (resources, sheetId, worksheet) => {
   }
 }
 
+// 设置数据验证
 const setDataValidation = (resources, sheetId, worksheet) => {
   const dataValidation = getCurrentSheetPlugin(resources, sheetId, 'SHEET_DATA_VALIDATION_PLUGIN')
   if (!dataValidation) return
@@ -290,7 +292,7 @@ const setDataValidation = (resources, sheetId, worksheet) => {
     ranges.forEach(range => {
       const cells = getCellsByRange(range)
       cells.forEach(cell => {
-        const letter = getLetter(cell.col, cell.row)
+        const letter = getLetter(cell.row, cell.col)
         const target = worksheet.getCell(letter)
         if (type === 'list') {
           const formulae = formula2 === '' ? [convertRange(formula1.slice(1))] : [`"${formula1}"`]
@@ -427,7 +429,6 @@ function setValue(cell) {
       })
       lastIndex = startIndex
     }
-
     value = {
       richText: richText,
     }

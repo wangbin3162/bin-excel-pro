@@ -69,7 +69,7 @@ import { useUniverStatus } from './useUniver'
 const { excelData } = useUniverStatus()
 
 function fieldDrag(event, dataset, field) {
-  console.log('item ========>', field)
+  // console.log('item ========>', field)
   event.dataTransfer.setData('field', toJson({ dataset, field }))
 }
 </script>

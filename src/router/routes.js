@@ -76,6 +76,12 @@ export const routesOutLayout = [
     name: 'ExcelDesign',
     component: () => import('@/views/pages/ExcelDesign/index.vue'),
   },
+  // 报表预览
+  {
+    path: '/excel-preview',
+    name: 'ExcelPreview',
+    component: () => import('@/views/pages/ExcelPreview/index.vue'),
+  },
 ]
 
 /**

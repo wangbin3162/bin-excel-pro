@@ -15,6 +15,7 @@
             <b-icon name="codelibrary" size="20"></b-icon>
           </b-button>
 
+          <b-divider type="vertical"></b-divider>
           <b-button type="primary" size="small" icon="login" plain @click="importExcel">
             导入
           </b-button>
@@ -31,6 +32,11 @@
           >
             保存
           </b-button>
+          <b-divider type="vertical"></b-divider>
+          <b-button type="primary" size="small" plain icon="eye" @click="handlePreview">
+            预览
+          </b-button>
+          <b-divider type="vertical"></b-divider>
           <b-button type="danger" size="small" icon="close" @click="closePage">关闭</b-button>
         </b-space>
       </div>
@@ -39,7 +45,7 @@
     <div class="sheet-body">
       <DatasetConfig />
 
-      <div id="SheetContainer" class="sheet-excel has-config" ref="containerRef"></div>
+      <div id="SheetContainer" class="sheet-excel" ref="containerRef" />
 
       <div class="right-config">
         <div class="title-top">
@@ -59,13 +65,14 @@
 import { toRaw } from 'vue'
 import { Message } from 'bin-ui-design'
 import { useUniverDesign, debugStatus } from './useUniver'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import * as api from '@/api/modules/excel.api'
 import { sendMsg } from '@/utils/cross-tab-msg'
 import DatasetConfig from './DatasetConfig.vue'
 import { toJson } from '@/utils/util'
 
 const router = useRouter()
+const route = useRoute()
 
 const {
   excelData,
@@ -123,6 +130,16 @@ async function saveSheetData() {
     console.log(error)
   }
   btnLoading.value = false
+}
+
+async function handlePreview() {
+  await saveSheetData()
+
+  let routeData = router.resolve({
+    path: '/excel-preview',
+    query: { id: route.query.id },
+  })
+  window.open(routeData.href, '_blank')
 }
 </script>
 

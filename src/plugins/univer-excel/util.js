@@ -1,14 +1,31 @@
 /**
- * 导出一个函数，用于获取字母
- * @param {String|Number} cellKey 单元格的列号
- * @param {String|Number} rowKey  单元格的行号
+ * 获取单元格的列名如 A,B,C AA
+ * @param {*} colKey
  * @returns
  */
-export function getLetter(cellKey, rowKey) {
-  const cellKeyNum = Number(cellKey)
+export function getCellColName(colKey) {
+  let index = Number(colKey)
+  let ordA = 'A'.charCodeAt(0) // 65
+  let ordZ = 'Z'.charCodeAt(0) //90
+  let len = ordZ - ordA + 1 // 26
+  let s = ''
+  while (index >= 0) {
+    s = String.fromCharCode((index % len) + ordA) + s
+    index = Math.floor(index / len) - 1
+  }
+  return s
+}
+
+/**
+ * 导出一个函数，用于获取字母
+ * @param {String|Number} rowKey  单元格的行号
+ * @param {String|Number} colKey 单元格的列号
+ * @returns
+ */
+export function getLetter(rowKey, colKey) {
   const rowKeyNum = Number(rowKey)
   // 将cellKey转换为字母
-  let letter = String.fromCharCode(65 + cellKeyNum)
+  let letter = getCellColName(colKey)
   // 如果rowKey大于0，则将字母与rowKey+1拼接
   if (rowKeyNum >= 0) {
     letter = letter + (rowKeyNum + 1)
@@ -49,11 +66,14 @@ export function getCurrentSheetPlugin(resources, sheetId, pluginName) {
   }
 }
 
+/**
+ * 根据一个起始-结束位置获取一个选区
+ * @param {*} range
+ * @returns
+ */
 export function getCellsByRange(range) {
   const { startRow, startColumn, endRow, endColumn } = range
-
   const cells = []
-
   for (let row = startRow; row <= endRow; row++) {
     for (let col = startColumn; col <= endColumn; col++) {
       cells.push({ row, col })
