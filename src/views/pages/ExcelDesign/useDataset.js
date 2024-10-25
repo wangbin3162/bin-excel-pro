@@ -19,6 +19,7 @@ const defaultDatasetList = [
     isList: true,
     fields: [
       { fieldName: 'name', fieldTitle: '姓名', type: 'string' },
+      { fieldName: 'gender', fieldTitle: '性别', type: 'string' },
       { fieldName: 'age', fieldTitle: '年龄', type: 'number' },
       { fieldName: 'address', fieldTitle: '地址', type: 'string' },
       { fieldName: 'birthday', fieldTitle: '生日', type: 'date' },

@@ -27,9 +27,8 @@ watch(
     if (id) {
       // 如果是有id表示为修改，无id则获取创建对象来进行设置
       const detail = await getReportDetail(id)
-      console.log('detail ========>', detail)
       document.title = `[预览] ${detail.name}`
-      initData(detail)
+      await initData(detail)
     }
 
     render.value = true

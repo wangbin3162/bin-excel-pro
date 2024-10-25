@@ -5,10 +5,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import useUniverRender from './useUniverRender'
 
-const { excelData, containerRef } = useUniverRender(true)
+const { containerRef } = useUniverRender(true)
 </script>
 
 <style scoped>

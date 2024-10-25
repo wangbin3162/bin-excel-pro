@@ -83,6 +83,10 @@ export function useUniverDesign() {
     univer.univerAPI.getSheetHooks().onCellDrop(sellDrop)
   })
 
+  onBeforeUnmount(() => {
+    univer?.destory()
+  })
+
   // 单元格放置事件
   function sellDrop({ dataTransfer, location }) {
     // console.log(dataTransfer, location, position)
@@ -104,16 +108,14 @@ export function useUniverDesign() {
     range.setWrapStrategy(2)
   }
 
-  onBeforeUnmount(() => {
-    univer?.destory()
-  })
-
+  // 导入excel
   function importExcel() {
     // univer.importExcel()
     univer.destoryWorkbook()
     univer.createSheet(newWorkbook())
   }
 
+  // 下载
   function download() {
     univer.downloadExcel()
   }

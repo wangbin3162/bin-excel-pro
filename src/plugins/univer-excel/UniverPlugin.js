@@ -35,37 +35,40 @@ import { UniverSheetsDataValidationPlugin } from '@univerjs/sheets-data-validati
 import { UniverSheetsDataValidationUIPlugin } from '@univerjs/sheets-data-validation-ui'
 import { exportExcel } from './Export'
 
+// 默认插件配置
+const defaultCfg = {
+  showNumfmt: false,
+  showFind: false,
+  showLink: false,
+  showFilter: false,
+  showDrawing: false,
+  showValidation: false,
+}
+
 /**
  *  Univer实例化对象
  */
 export class UniverPlugin {
-  static init(container) {
-    return new UniverPlugin(container, {
-      showNumfmt: true,
-      showFind: false,
-      showLink: false,
-      showFilter: true,
-      showDrawing: true,
-      showValidation: true,
-    })
-  }
-
-  // 注册初始化，并绑定容器
-  constructor(
+  static init(
     container,
     cfg = {
       showNumfmt: true,
-      showFind: true,
-      showLink: true,
       showFilter: true,
       showDrawing: true,
       showValidation: true,
     },
   ) {
+    return new UniverPlugin(container, { ...defaultCfg, ...cfg })
+  }
+
+  // 注册初始化，并绑定容器
+  constructor(container, cfg = {}) {
     if (!container) {
       console.error('container is required!')
       return
     }
+
+    cfg = { ...defaultCfg, ...cfg }
 
     const univer = new Univer({
       theme: defaultTheme,
