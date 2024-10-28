@@ -68,9 +68,6 @@ export default function useUniverRender(isPreview = false) {
         deepCopy(toRaw(excelData.value.univerInfo)),
         deepCopy(toRaw(dataList.value)),
       )
-      console.log('--------------------------------------------')
-
-      console.log('excelData.value.univerInfo ========>', excelData.value.univerInfo)
       univer = UniverPlugin.init(containerRef.value, {})
       univer.createSheet(excelData.value.univerInfo)
       // 事件监听
