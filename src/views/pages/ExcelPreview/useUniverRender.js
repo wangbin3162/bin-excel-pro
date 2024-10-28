@@ -64,10 +64,13 @@ export default function useUniverRender(isPreview = false) {
   if (isPreview) {
     onMounted(() => {
       // 处理univer数据
-      cellDataConverter(
+      excelData.value.univerInfo = cellDataConverter(
         deepCopy(toRaw(excelData.value.univerInfo)),
         deepCopy(toRaw(dataList.value)),
       )
+      console.log('--------------------------------------------')
+
+      console.log('excelData.value.univerInfo ========>', excelData.value.univerInfo)
       univer = UniverPlugin.init(containerRef.value, {})
       univer.createSheet(excelData.value.univerInfo)
       // 事件监听

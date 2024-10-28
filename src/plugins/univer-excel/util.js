@@ -81,3 +81,65 @@ export function getCellsByRange(range) {
   }
   return cells
 }
+
+/**
+ * 判断字符串是否被${}包裹
+ * @param {*} value
+ * @returns
+ */
+export function isWrappedWithDollarBrackets(value) {
+  return /^\$\{.*\}$/.test(value)
+}
+
+/**
+ * 判断字符串是否被#\{}包裹
+ * @param {*} value
+ * @returns
+ */
+export function isWrappedWithHashBrackets(value) {
+  return /#\{([^}]+)\}/g.test(value)
+}
+
+/**
+ * 根据字符串获取对象中的值 ${code001.name}
+ * @param {*} val
+ * @param {*} dataObject
+ * @returns
+ */
+export function getValFromObjByString(val, dataObject) {
+  const regex = /\$\{([^}]+)\}/g
+  let result = val
+  let match
+  while ((match = regex.exec(val)) !== null) {
+    const propertyPath = match[1].split('.')
+    // console.log('propertyPath ========>', propertyPath, dataObject)
+    let currentObject = dataObject
+    for (let i = 0; i < propertyPath.length; i++) {
+      // console.log('propertyPath[i] ========>', propertyPath[i])
+      currentObject = currentObject[propertyPath[i]]
+      // console.log('currentObject ========>', currentObject)
+    }
+    result = result.replace(match[0], currentObject)
+  }
+
+  return result
+}
+
+/**
+ * 根据字符串获取对象中的值 #{}
+ * @param {*} val
+ * @param {*} dataObject 单个对象
+ * @returns
+ */
+export function getValItemFromObjByString(val, dataObject) {
+  const newCellValue = val.replace(/#\{([^}]+)\}/g, (match, propertyName) => {
+    const propertyPath = propertyName.split('.')
+    let value = dataObject
+    if (propertyPath.length === 2) {
+      value = dataObject[propertyPath[1]]
+    }
+
+    return value
+  })
+  return newCellValue
+}
