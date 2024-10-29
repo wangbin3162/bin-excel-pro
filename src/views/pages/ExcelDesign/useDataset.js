@@ -23,6 +23,10 @@ const defaultDatasetList = [
       { fieldName: 'age', fieldTitle: '年龄', type: 'number' },
       { fieldName: 'address', fieldTitle: '地址', type: 'string' },
       { fieldName: 'birthday', fieldTitle: '生日', type: 'date' },
+      { fieldName: 'age', fieldTitle: '年龄', type: 'number' },
+      { fieldName: 'chinese', fieldTitle: '语文成绩', type: 'number' },
+      { fieldName: 'maths', fieldTitle: '数学成绩', type: 'number' },
+      { fieldName: 'english', fieldTitle: '英语成绩', type: 'number' },
     ],
   },
 ]

@@ -38,6 +38,54 @@ export function getLetter(rowKey, colKey) {
 }
 
 /**
+ * 根据单元格的字母获取单元格的行号和列号
+ * @param {*} letter
+ * @returns
+ */
+export function getCellKeyByLetter(letter) {
+  let colKey = 0
+  // 获取字母中的数字部分，并将其转换为整数，减去1得到行号
+  let rowKey = parseInt(letter.match(/\d+$/)[0]) - 1
+
+  // 获取字母中的字母部分
+  const colPart = letter.match(/^[A-Z]+/)[0]
+  let tempColKey = 0
+
+  // 遍历字母部分，将每个字母转换为对应的数字，并计算列号
+  for (let i = 0; i < colPart.length; i++) {
+    const charCode = colPart.charCodeAt(i) - 64
+    tempColKey += (charCode - 1) * Math.pow(26, colPart.length - 1 - i)
+  }
+  colKey = tempColKey
+
+  // 返回行号和列号
+  return { rowKey, colKey }
+}
+
+/**
+ * 安全获取单元格的值
+ * @param {*} cellData  单元格所有对象
+ * @param {*} rowKey 目标的行索引
+ * @param {*} colKey 目标列索引
+ */
+export function safeGetCell(cellData, rowKey, colKey) {
+  if (cellData && cellData[rowKey] && cellData[rowKey][colKey]) {
+    return cellData[rowKey][colKey]
+  }
+  return null
+}
+
+/**
+ * 安全获取单元格的值 ,根据letter
+ * @param {*} cellData  单元格所有对象
+ * @param {*} letter  单元格标记 如A3
+ */
+export function safeGetCellByLetter(cellData, letter) {
+  const { rowKey, colKey } = getCellKeyByLetter(letter)
+  return safeGetCell(cellData, rowKey, colKey)
+}
+
+/**
  * 根据插件名称获取当前sheet的配置
  * @param {*} resources   //插件资源
  * @param {*} sheetId     // 当前sheet的id
@@ -83,68 +131,6 @@ export function getCellsByRange(range) {
     }
   }
   return cells
-}
-
-/**
- * 判断字符串是否被${}包裹
- * @param {*} value
- * @returns
- */
-export function isWrappedWithDollarBrackets(value) {
-  return /^\$\{.*\}$/.test(value)
-}
-
-/**
- * 判断字符串是否被#\{}包裹
- * @param {*} value
- * @returns
- */
-export function isWrappedWithHashBrackets(value) {
-  return /#\{([^}]+)\}/g.test(value)
-}
-
-/**
- * 根据字符串获取对象中的值 ${code001.name}
- * @param {*} val
- * @param {*} dataObject
- * @returns
- */
-export function getValFromObjByString(val, dataObject) {
-  const regex = /\$\{([^}]+)\}/g
-  let result = val
-  let match
-  while ((match = regex.exec(val)) !== null) {
-    const propertyPath = match[1].split('.')
-    // console.log('propertyPath ========>', propertyPath, dataObject)
-    let currentObject = dataObject
-    for (let i = 0; i < propertyPath.length; i++) {
-      // console.log('propertyPath[i] ========>', propertyPath[i])
-      currentObject = currentObject[propertyPath[i]]
-      // console.log('currentObject ========>', currentObject)
-    }
-    result = result.replace(match[0], currentObject)
-  }
-
-  return result
-}
-
-/**
- * 根据字符串获取对象中的值 #{}
- * @param {*} val
- * @param {*} dataObject 单个对象
- * @returns
- */
-export function getValItemFromObjByString(val, dataObject) {
-  const newCellValue = val.replace(/#\{([^}]+)\}/g, (match, propertyName) => {
-    const propertyPath = propertyName.split('.')
-    let value = dataObject
-    if (propertyPath.length === 2) {
-      value = dataObject[propertyPath[1]]
-    }
-
-    return value
-  })
-  return newCellValue
 }
 
 /**
