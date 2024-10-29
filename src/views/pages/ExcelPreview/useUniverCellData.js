@@ -4,9 +4,8 @@ import {
   getValItemFromObjByString,
   isWrappedWithDollarBrackets,
   isWrappedWithHashBrackets,
+  clearEmptyInCellData,
 } from '@/plugins/univer-excel/util'
-import { isEmpty } from '@/utils/util'
-import { isEmptyCell } from '@univerjs/core'
 
 /**
  * 处理univer cellData数据，并返回新的渲染数据
@@ -15,44 +14,23 @@ import { isEmptyCell } from '@univerjs/core'
  * @param {*} dataList 已经请求的数据集数据
  */
 export default function cellDataConverter(univerInfo, dataList) {
-  // 目前暂时只处理第一个sheet的数据，后面的都会被忽略
-  const { sheetOrder, sheets } = univerInfo
-  const activeSheet = sheets[sheetOrder[0]]
-  const { cellData } = activeSheet
-  const noEmptyCellData = clearEmptyInCellData(cellData)
-  const newCellData = traverseAssign(noEmptyCellData, dataList)
+  // 这里优化一下，循环遍历所有sheets进行赋值
 
-  console.log('----------------cellDataConverter----------------')
-  console.log('activeSheet|dataList ========>', activeSheet, dataList)
-  console.log('cellData ========>', cellData)
-  // console.log('noEmptyCellData ========>', noEmptyCellData) //JSON.stringify(newCellData)
-  console.log('newCellData ========>', newCellData)
-  console.log('-------------------------------------------------')
-  activeSheet.cellData = newCellData
+  univerInfo.sheetOrder.forEach(key => {
+    // 获取每一个sheet
+    const sheet = univerInfo.sheets[key]
+    const noEmptyCellData = clearEmptyInCellData(sheet.cellData)
+    const newCellData = traverseAssign(noEmptyCellData, dataList)
+
+    console.log('----------------cellDataConverter----------------')
+    console.log('sheet|dataList ========>', sheet, dataList)
+    console.log('cellData ========>', sheet.cellData)
+    console.log('newCellData ========>', newCellData)
+    console.log('-------------------------------------------------')
+    sheet.cellData = newCellData
+  })
 
   return univerInfo
-}
-
-// 去除空单元格
-function clearEmptyInCellData(cellData) {
-  const newCellData = {}
-  // 遍历行
-  for (const rowKey in cellData) {
-    const row = cellData[rowKey]
-    const newRow = {}
-    for (const colKey in row) {
-      const cell = row[colKey]
-      if (!isEmptyCell(cell)) {
-        newRow[colKey] = cell
-      }
-    }
-    // console.log('row|newRow ========>', rowKey, row, newRow)
-    if (!isEmpty(newRow)) {
-      newCellData[rowKey] = newRow
-    }
-  }
-  // console.log('cellData|newCellData ========>', cellData, newCellData)
-  return newCellData
 }
 
 // 遍历赋值

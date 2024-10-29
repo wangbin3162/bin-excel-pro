@@ -1,3 +1,6 @@
+import { isEmpty } from '@/utils/util'
+import { isEmptyCell } from '@univerjs/core'
+
 /**
  * 获取单元格的列名如 A,B,C AA
  * @param {*} colKey
@@ -142,4 +145,30 @@ export function getValItemFromObjByString(val, dataObject) {
     return value
   })
   return newCellValue
+}
+
+/**
+ * 格式化cellData，将空值去掉
+ * @param {*} cellData
+ * @returns
+ */
+export function clearEmptyInCellData(cellData) {
+  const newCellData = {}
+  // 遍历行
+  for (const rowKey in cellData) {
+    const row = cellData[rowKey]
+    const newRow = {}
+    for (const colKey in row) {
+      const cell = row[colKey]
+      if (!isEmptyCell(cell)) {
+        newRow[colKey] = cell
+      }
+    }
+    // console.log('row|newRow ========>', rowKey, row, newRow)
+    if (!isEmpty(newRow)) {
+      newCellData[rowKey] = newRow
+    }
+  }
+  // console.log('cellData|newCellData ========>', cellData, newCellData)
+  return newCellData
 }

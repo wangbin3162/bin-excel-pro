@@ -17,7 +17,7 @@ export function exportExcel(workbookData) {
     // 1.创建工作簿，可以为工作簿添加属性
     const workbook = new Excel.Workbook()
     // 遍历sheet对象
-    Object.keys(workbookData.sheets).forEach(key => {
+    workbookData.sheetOrder.forEach(key => {
       // 获取每一个sheet
       const sheet = workbookData.sheets[key]
       // console.log(sheet)
@@ -85,17 +85,19 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
     Object.keys(row).forEach(cellKey => {
       // 获取单元格
       const cell = row[cellKey]
-      const style = styles[cell.s] || {}
       let letter = getLetter(rowKey, cellKey)
       let target = worksheet.getCell(letter)
-      // console.log(`cell ========>[${letter}]`, cell, style)
+      // console.log(`cell ========>[${letter}]`, cell)
+      if (cell.s) {
+        const style = styles[cell.s] || {}
 
-      const fill = fillConvert(style) //填充颜色
-      if (fill) target.fill = fill
-      const font = fontConvert(style) //字体
-      if (font) target.font = font
-      const alignment = alignmentConvert(style)
-      if (alignment) target.alignment = alignment
+        const fill = fillConvert(style) //填充颜色
+        if (fill) target.fill = fill
+        const font = fontConvert(style) //字体
+        if (font) target.font = font
+        const alignment = alignmentConvert(style)
+        if (alignment) target.alignment = alignment
+      }
       // 设置值
       let value = setValue(cell)
       target.value = value

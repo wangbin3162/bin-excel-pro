@@ -19,7 +19,7 @@
           <b-button type="primary" size="small" icon="login" plain @click="importExcel">
             导入
           </b-button>
-          <b-button type="primary" size="small" icon="logout" plain @click="download">
+          <b-button type="primary" size="small" icon="logout" plain @click="handleDownload">
             导出
           </b-button>
           <b-divider type="vertical"></b-divider>
@@ -69,7 +69,8 @@ import { useRouter, useRoute } from 'vue-router'
 import * as api from '@/api/modules/excel.api'
 import { sendMsg } from '@/utils/cross-tab-msg'
 import DatasetConfig from './DatasetConfig.vue'
-import { toJson } from '@/utils/util'
+import { deepCopy, toJson } from '@/utils/util'
+import { clearEmptyInCellData } from '@/plugins/univer-excel/util'
 
 const router = useRouter()
 const route = useRoute()
@@ -85,8 +86,20 @@ const {
   setUniverInfo,
 } = useUniverDesign()
 
+// 处理保存数据
 function getSaveData() {
   setUniverInfo()
+  console.log('excelData.value ========>', excelData.value)
+
+  // 处理univerInfo数据，移除多个sheet，只保留第一个sheet的数据，并且对第一个sheet进行去空处理
+  const univerInfo = deepCopy(excelData.value.univerInfo)
+  univerInfo.sheetOrder.forEach(key => {
+    // 获取每一个sheet
+    const sheet = univerInfo.sheets[key]
+    sheet.cellData = clearEmptyInCellData(sheet.cellData)
+  })
+  // 设置回原始univerInfo
+  excelData.value.univerInfo = univerInfo
   // 组装数据
   const data = {
     ...toRaw(excelData.value),
@@ -94,10 +107,17 @@ function getSaveData() {
     univerInfo: toJson(excelData.value.univerInfo),
     config: toJson(excelData.value.config),
   }
-  console.log('saveSheetData ========>', excelData.value, data)
+  console.log('saveData ========>', data)
   return data
 }
 
+// 下载
+async function handleDownload() {
+  await saveSheetData()
+  download()
+}
+
+// 调用保存方法
 async function saveSheetData() {
   try {
     btnLoading.value = true
@@ -132,6 +152,7 @@ async function saveSheetData() {
   btnLoading.value = false
 }
 
+// 预览
 async function handlePreview() {
   await saveSheetData()
 
