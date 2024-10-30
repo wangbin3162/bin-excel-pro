@@ -1,4 +1,4 @@
-import { ref, toRaw, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, toRaw, onMounted, onBeforeUnmount } from 'vue'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { setDatasetList } from '@/views/pages/ExcelDesign/useDataset'

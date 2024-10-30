@@ -1,9 +1,4 @@
-import {
-  getLetter,
-  getCellKeyByLetter,
-  safeGetCell,
-  clearEmptyInCellData,
-} from '@/plugins/univer-excel/util'
+import { getLetter, getCellDataByLetter, getCellIdentifiers } from '@/plugins/univer-excel/util'
 
 /**
  * 处理univer cellData数据，并返回新的渲染数据
@@ -17,13 +12,13 @@ export default function cellDataConverter(univerInfo, dataList, dataset) {
   univerInfo.sheetOrder.forEach(key => {
     // 获取每一个sheet
     const sheet = univerInfo.sheets[key]
-    const noEmptyCellData = clearEmptyInCellData(sheet.cellData)
-    const newCellData = traverseAssign(noEmptyCellData, dataList, dataset)
+    const { newCellData, cellOffsetMap } = traverseAssign(sheet.cellData, dataList, dataset)
 
     console.log('----------------cellDataConverter----------------')
     console.log('sheet|dataList|dataset ========>', sheet, dataList, dataset)
     console.log('cellData ========>', sheet.cellData)
     console.log('newCellData ========>', newCellData)
+    console.log('cellOffsetMap ========>', cellOffsetMap)
     console.log('-------------------------------------------------')
     sheet.cellData = newCellData
   })
@@ -40,12 +35,12 @@ export default function cellDataConverter(univerInfo, dataList, dataset) {
  */
 function traverseAssign(cellData, dataList, dataset, debug = false) {
   const newCellData = {}
+  const cellOffsetMap = {} // 用于记录后面单元格是否有偏移内容如列表中总计的F6因为列表渲染移动到了F12
   let currentRowIndex = 0 // 当前需要追加的行索引
   let totalOffset = 0 // 总偏移量
   // 遍历行
   for (const rowKey in cellData) {
     const row = cellData[rowKey]
-    const newRowData = {}
     // 检查当前行是否包含动态内容（以#{...}包裹的表达式）
     const hasDynamicVal = Object.values(row).some(cellData => isWrappedWithHashBrackets(cellData.v))
     if (hasDynamicVal) {
@@ -56,7 +51,7 @@ function traverseAssign(cellData, dataList, dataset, debug = false) {
       for (let i = 0; i < dataArr.length; i++) {
         const dataItem = dataArr[i]
         const newRowIndex = currentRowIndex + i
-        debug && console.log('追加新行 ====>', newRowIndex)
+        debug && console.log(' ====> 追加新行', newRowIndex)
         const newRow = {}
         // 遍历列
         for (const colKey in row) {
@@ -71,23 +66,28 @@ function traverseAssign(cellData, dataList, dataset, debug = false) {
     } else {
       // 当前行不包含动态内容，直接复制行数据
       const newRowIndex = +rowKey + totalOffset
+      const newRow = {}
       debug && console.log(`====> 当前行直接复制行数据 [row:${rowKey} ==> row:${newRowIndex}]`)
       // 遍历列
       for (const colKey in row) {
         const cell = row[colKey]
-        const newCell = parseData(cell, dataList, dataset)
-        newRowData[colKey] = {
-          ...calcFunction(cell, newRowIndex, colKey, cellData),
-          ...newCell,
+
+        if (totalOffset > 0) {
+          cellOffsetMap[getLetter(rowKey, colKey)] = getLetter(newRowIndex, colKey)
         }
-        debug &&
-          console.log(`更新 Cell [${getLetter(newRowIndex, colKey)}]====>`, newRowData[colKey])
+
+        const newCell = parseData(cell, dataList, dataset)
+        newRow[colKey] = newCell
+        debug && console.log(`更新 Cell [${getLetter(newRowIndex, colKey)}]====>`, newRow[colKey])
       }
-      newCellData[newRowIndex] = newRowData
+      newCellData[newRowIndex] = newRow
     }
   }
-  debug && console.log('newCellData ========>', newCellData)
-  return newCellData
+  debug && console.log('cellOffsetMap ========>', cellOffsetMap)
+  return {
+    newCellData,
+    cellOffsetMap,
+  }
 }
 
 /******************************************处理函数*********************************************/
@@ -138,8 +138,8 @@ function parseData(cell, dataList, dataset) {
   return cell
 }
 
-// 定义一个函数，用于计算公式使用
-function calcFunction(cell, rowKey, colKey, rawCellData) {
+// 定义一个函数，用于计算行公式使用
+function calcRowFunction(cell, rowKey, colKey, rawCellData) {
   const currentRowNum = +rowKey
   const currentColNum = +colKey
   const { f } = cell
@@ -155,32 +155,77 @@ function calcFunction(cell, rowKey, colKey, rawCellData) {
     // 判断是否需要进行动态追加
     if (sumArr.length === 1) {
       // 取得第一个索引，如C3
-      const cellKey = sumArr[0]
-      // 获取单元格的行号和列号
-      const firstCell = getCellKeyByLetter(cellKey)
+      const cellLetter = sumArr[0]
       // 获取第一个单元格内容
-      const firstCellValue = safeGetCell(rawCellData, firstCell.rowKey, firstCell.colKey)
+      const firstCellValue = getCellDataByLetter(rawCellData, cellLetter)
       // 如果firstCellValue存在并且firstCellValue.v被#{}括号包裹，则表示是动态数据，需要追加赋值
       if (firstCellValue && isWrappedWithHashBrackets(firstCellValue.v)) {
         // 获取当前行上方单元格的字母
         const targetCell = getLetter(currentRowNum - 1, currentColNum)
         // 重组公式字符串
-        const newSumStr = `=SUM(${cellKey}:${targetCell})`
-        console.log('newSumStr ========>', newSumStr)
-        console.log('firstCell ========>', rawCellData, firstCell, firstCellValue, targetCell)
+        const newSumStr = `=SUM(${cellLetter}:${targetCell})`
+        // console.log('newSumStr ========>', newSumStr)
+        // console.log('firstCell ========>', rawCellData, firstCell, firstCellValue, targetCell)
         cell.f = newSumStr
       }
+
+      // console.log('calc SUM ========>', cell, getLetter(rowKey, colKey))
     }
-    // console.log(
-    //   'sum ========>',
-    //   cell,
-    //   getLetter(rowKey, colKey),
-    //   sumStr,
-    //   getCellKeyByLetter(sumStr),
-    // )
-    // console.log('--------------------------------------------')
   }
   return cell
+}
+
+// 计算单元格公式
+function calcCellFunction(cell, rowKey, colKey, rawCellData) {
+  const currentRowNum = +rowKey
+  // const currentColNum = +colKey
+  const { f } = cell
+  if (f) {
+    console.log('f ========>', f, getLetter(rowKey, colKey), rawCellData)
+    // 提取字段中的单元格标记
+    const cellLetters = getCellIdentifiers(f)
+    const cellKeys = [] // 新的单元格标记
+    //遍历单元格标记
+    cellLetters.forEach(letter => {
+      const cell = getCellDataByLetter(rawCellData, letter)
+      // 判断原始的cell值，如果是#{}包裹的，则表示是动态数据，需要追加赋值
+      if (cell && isWrappedWithHashBrackets(cell.v)) {
+        // 获取新的单元格标记
+        cellKeys.push(updateCellIndex(letter, currentRowNum + 1))
+      } else {
+        cellKeys.push(letter)
+      }
+      console.log('updateCellIndex ========>', letter, cell)
+    })
+    console.log('cellLetters|cellKeys ========>', cellLetters, cellKeys)
+    const newF = replaceCellIdentifiers(f, cellLetters, cellKeys)
+    console.log('newF ========>', newF)
+    console.log('--------------------------------------------')
+    cell.f = newF
+  }
+  return cell
+}
+
+// 更新单元格索引，如C3 => C4
+function updateCellIndex(cellIdentifier, newIndex) {
+  console.log('newIndex ========>', newIndex)
+  const matchs = cellIdentifier.match(/[A-Z]+/)
+  if (matchs && matchs[0]) {
+    const letters = matchs[0]
+    return `${letters}${newIndex}`
+  }
+  return cellIdentifier
+}
+
+// 根据单元格标记对公式进行替换操作
+function replaceCellIdentifiers(originalString, cellIdentifierArray, convertedCellIdentifierArray) {
+  let newString = originalString
+  for (let i = 0; i < cellIdentifierArray.length; i++) {
+    const originalCellIdentifier = cellIdentifierArray[i]
+    const convertedCellIdentifier = convertedCellIdentifierArray[i]
+    newString = newString.replace(originalCellIdentifier, convertedCellIdentifier)
+  }
+  return newString
 }
 
 /******************************************辅助函数*********************************************/
@@ -243,19 +288,22 @@ function getHashBracketsPropertys(cell) {
  */
 function getValFromObjByString(cell, dataObject, dataset) {
   const propertyPath = getDollarBracketsPropertys(cell)
-  const dataType = getDataTypeByPopertyPath(propertyPath, dataset)
-  let value = dataObject
-  for (let i = 0; i < propertyPath.length; i++) {
-    value = value[propertyPath[i]]
+  if (propertyPath) {
+    const dataType = getDataTypeByPopertyPath(propertyPath, dataset)
+    let value = dataObject
+    for (let i = 0; i < propertyPath.length; i++) {
+      value = value[propertyPath[i]]
+    }
+    // console.log('currentObject ========>', currentObject)
+    const newCell = {
+      ...cell,
+      v: value,
+      t: dataType,
+    }
+    // console.log('newCell $ ========>', newCell)
+    return newCell
   }
-  // console.log('currentObject ========>', currentObject)
-  const newCell = {
-    ...cell,
-    v: value,
-    t: dataType,
-  }
-  // console.log('newCell $ ========>', newCell)
-  return newCell
+  return cell
 }
 
 /**
@@ -267,18 +315,21 @@ function getValFromObjByString(cell, dataObject, dataset) {
  */
 function getValItemFromObjByString(cell, dataObject, dataset) {
   const propertyPath = getHashBracketsPropertys(cell)
-  const dataType = getDataTypeByPopertyPath(propertyPath, dataset)
-  let value = dataObject
-  if (propertyPath && propertyPath.length === 2) {
-    value = value[propertyPath[1]]
+  if (propertyPath) {
+    const dataType = getDataTypeByPopertyPath(propertyPath, dataset)
+    let value = dataObject
+    if (propertyPath.length === 2) {
+      value = value[propertyPath[1]]
+    }
+    const newCell = {
+      ...cell,
+      v: value,
+      t: dataType,
+    }
+    // console.log('newCell # ========>', newCell)
+    return newCell
   }
-  const newCell = {
-    ...cell,
-    v: value,
-    t: dataType,
-  }
-  // console.log('newCell # ========>', newCell)
-  return newCell
+  return cell
 }
 
 /**
@@ -287,7 +338,8 @@ function getValItemFromObjByString(cell, dataObject, dataset) {
  * @param {*} dataset
  */
 function getDataTypeByPopertyPath(propertyPath, dataset) {
-  if (propertyPath.length !== 2) return 1 // 如果属性解析数组长度不是2，说明解析失败，默认字符串类型
+  // console.log('propertyPath ========>', propertyPath)
+  if (!propertyPath || propertyPath.length !== 2) return 1 // 如果属性解析数组长度不是2，说明解析失败，默认字符串类型
 
   // 根据属性路径获取数据集对象，第一个code取得对应数据集
   const data = dataset.find(item => item.code === propertyPath[0])
@@ -306,22 +358,3 @@ function getDataTypeByPopertyPath(propertyPath, dataset) {
 
   return 1
 }
-
-// export function getValFromObjByString(val, dataObject) {
-//   const regex = /\$\{([^}]+)\}/g
-//   let result = val
-//   let match
-//   while ((match = regex.exec(val)) !== null) {
-//     const propertyPath = match[1].split('.')
-//     // console.log('propertyPath ========>', propertyPath, dataObject)
-//     let currentObject = dataObject
-//     for (let i = 0; i < propertyPath.length; i++) {
-//       // console.log('propertyPath[i] ========>', propertyPath[i])
-//       currentObject = currentObject[propertyPath[i]]
-//       // console.log('currentObject ========>', currentObject)
-//     }
-//     result = result.replace(match[0], currentObject)
-//   }
-
-//   return result
-// }

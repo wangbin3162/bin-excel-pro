@@ -63,12 +63,12 @@ export function getCellKeyByLetter(letter) {
 }
 
 /**
- * 安全获取单元格的值
+ * 根据rowkey和colkey安全获取单元格的值
  * @param {*} cellData  单元格所有对象
  * @param {*} rowKey 目标的行索引
  * @param {*} colKey 目标列索引
  */
-export function safeGetCell(cellData, rowKey, colKey) {
+export function getCellDataByKey(cellData, rowKey, colKey) {
   if (cellData && cellData[rowKey] && cellData[rowKey][colKey]) {
     return cellData[rowKey][colKey]
   }
@@ -80,9 +80,9 @@ export function safeGetCell(cellData, rowKey, colKey) {
  * @param {*} cellData  单元格所有对象
  * @param {*} letter  单元格标记 如A3
  */
-export function safeGetCellByLetter(cellData, letter) {
+export function getCellDataByLetter(cellData, letter) {
   const { rowKey, colKey } = getCellKeyByLetter(letter)
-  return safeGetCell(cellData, rowKey, colKey)
+  return getCellDataByKey(cellData, rowKey, colKey)
 }
 
 /**
@@ -157,4 +157,50 @@ export function clearEmptyInCellData(cellData) {
   }
   // console.log('cellData|newCellData ========>', cellData, newCellData)
   return newCellData
+}
+
+/**
+ * 根据字符串解析出单元格标识字段，如A1,B2,C3
+ * @param {*} str
+ * @returns
+ */
+export function getCellIdentifiers(str) {
+  // 定义单元格范围的正则表达式
+  const cellRangesRegex = /[A-Z]+\d+(?::[A-Z]+\d+)?/g
+  // 定义单个单元格的正则表达式
+  const singleCellRegex = /[A-Z]+\d+/g
+
+  // 在字符串中匹配单元格范围
+  const cellRangesMatches = str.match(cellRangesRegex)
+  // 在字符串中匹配单个单元格
+  const singleCellMatches = str.match(singleCellRegex)
+
+  // 定义一个空数组，用于存储单元格标识
+  let cellIdentifiers = []
+
+  // 处理可能包含单元格范围的匹配结果
+  if (cellRangesMatches) {
+    // 将单元格范围拆分为起始和结束单元格
+    cellIdentifiers = cellRangesMatches.flatMap(range => {
+      if (range.includes(':')) {
+        const [start, end] = range.split(':')
+        return [start, end]
+      } else {
+        return [range]
+      }
+    })
+  }
+
+  // 处理单纯单个单元格标识的匹配结果
+  if (singleCellMatches) {
+    // 过滤掉重复的单元格标识
+    const uniqueSingleCellMatches = singleCellMatches.filter((cell, index, self) => {
+      return self.indexOf(cell) === index
+    })
+    // 将过滤后的单元格标识添加到cellIdentifiers数组中
+    cellIdentifiers.push(...uniqueSingleCellMatches)
+  }
+
+  // 返回去重后的单元格标识
+  return [...new Set(cellIdentifiers)]
 }
