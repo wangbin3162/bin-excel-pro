@@ -4,7 +4,7 @@ import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { setDatasetList } from '@/views/pages/ExcelDesign/useDataset'
 import { deepCopy, fromJson } from '@/utils/util'
 import { getDatasetData } from '@/api//modules/dataset.api'
-import cellDataConverter from './useUniverCellData'
+import cellDataConverter from './processing'
 
 const status = {
   excelData: ref({
@@ -69,7 +69,7 @@ export default function useUniverRender(isPreview = false) {
         deepCopy(toRaw(dataList.value)),
         deepCopy(toRaw(excelData.value.datasetInfo.list)),
       )
-      univer = UniverPlugin.init(containerRef.value, {})
+      univer = UniverPlugin.init(containerRef.value)
       univer.createSheet(excelData.value.univerInfo)
       // 事件监听
       // univer.univerAPI.getHooks().onStarting(() => {

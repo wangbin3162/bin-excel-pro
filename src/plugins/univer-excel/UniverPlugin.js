@@ -37,28 +37,20 @@ import { exportExcel } from './Export'
 
 // 默认插件配置
 const defaultCfg = {
-  showNumfmt: false,
-  showFind: false,
-  showLink: false,
-  showFilter: false,
-  showDrawing: false,
-  showValidation: false,
+  showNumfmt: true,
+  showFind: true,
+  showLink: true,
+  showFilter: true,
+  showDrawing: true,
+  showValidation: true,
 }
 
 /**
  *  Univer实例化对象
  */
 export class UniverPlugin {
-  static init(
-    container,
-    cfg = {
-      showNumfmt: true,
-      showFilter: true,
-      showDrawing: true,
-      showValidation: true,
-    },
-  ) {
-    return new UniverPlugin(container, { ...defaultCfg, ...cfg })
+  static init(container, cfg = {}) {
+    return new UniverPlugin(container, cfg)
   }
 
   // 注册初始化，并绑定容器
