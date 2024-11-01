@@ -54,7 +54,7 @@ function rangeChange({ startRow, startColumn }) {
   // console.log(startRow, startColumn)
   const cellData = univer.value.getCell(startRow, startColumn)
   currentCell.value = cellData.cell
-  console.log('cellData ========>', cellData)
+  // console.log('cellData ========>', cellData)
   isDymamicMerge.value = currentCell.value.custom?.isDymamicMerge || false
 }
 

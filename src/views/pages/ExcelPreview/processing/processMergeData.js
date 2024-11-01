@@ -1,11 +1,4 @@
-import {
-  getCellKeyByLetter,
-  getCellDataByLetter,
-  getLetter,
-  getCellIdentifiers,
-} from '@/plugins/univer-excel/util'
 import { logTitle } from './log'
-import { deepCopy } from '@/utils/util'
 
 export default function processMergeData(cellData, unitId, sheetId) {
   logTitle('[3] processMergeData')
@@ -20,7 +13,7 @@ export default function processMergeData(cellData, unitId, sheetId) {
       const colIndex = Number(colKey)
 
       if (cell.custom && cell.custom.isDymamicMerge && cell.custom.isList) {
-        console.log('cell ========>', cell)
+        // console.log('cell ========>', cell)
         if (!currentMerge[colKey]) {
           currentMerge[colKey] = {
             startRow: rowIndex,
@@ -34,7 +27,7 @@ export default function processMergeData(cellData, unitId, sheetId) {
           if (cellData[sRow][sCol].v === cell.v) {
             currentMerge[colKey].endRow = rowIndex
             currentMerge[colKey].endColumn = colIndex
-            console.log('cell.v ========>', cell.v)
+            // console.log('cell.v ========>', cell.v)
           } else {
             const currentMergeData = getMergeData(currentMerge[colKey], unitId, sheetId)
             if (currentMergeData) {
@@ -51,7 +44,6 @@ export default function processMergeData(cellData, unitId, sheetId) {
       }
     }
   }
-  console.log('currentMerge ========>', currentMerge)
 
   for (const key in currentMerge) {
     if (currentMerge[key]) {
@@ -75,7 +67,6 @@ function getMergeData(currentMerge, unitId, sheetId) {
     return null
   }
 
-  console.log('--------------------------------------------', currentMerge)
   return {
     startRow: currentMerge.startRow,
     startColumn: currentMerge.startColumn,

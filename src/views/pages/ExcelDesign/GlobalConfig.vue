@@ -1,13 +1,13 @@
 <template>
   <div class="global-config">
-    {{ excelData }}
+    <DictConfig />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-
 import { useUniverStatus } from './useUniver'
+import DictConfig from './components/DictConfig.vue'
 
 const { excelData, currentRange } = useUniverStatus()
 </script>

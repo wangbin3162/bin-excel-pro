@@ -43,22 +43,26 @@ export function setDatasetList(datasetList) {
 
 // 创建数据集列表
 export function newDataset(dataset = {}) {
-  return {
-    id: '',
-    name: '',
-    code: '',
-    isList: false,
-    fields: [],
-    ...dataset,
-  }
+  return deepMerge(
+    {
+      id: '',
+      name: '',
+      code: '',
+      isList: false,
+      fields: [],
+    },
+    dataset,
+  )
 }
 
 // 新增一个字段
 export function newField(field = {}) {
-  return {
-    fieldName: '',
-    fieldTitle: '',
-    type: 'string',
-    ...field,
-  }
+  return deepMerge(
+    {
+      fieldName: '',
+      fieldTitle: '',
+      type: 'string',
+    },
+    field,
+  )
 }

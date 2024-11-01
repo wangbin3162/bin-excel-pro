@@ -4,6 +4,7 @@ import { fromJson } from '@/utils/util'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
 import { setDatasetList } from '@/views/pages/ExcelDesign/useDataset'
+import { setGlobalConfig } from '@/views/pages/ExcelDesign/useConfig'
 import { getLetter } from '@/plugins/univer-excel/util'
 
 const status = {
@@ -69,7 +70,7 @@ export function useUniverStatus() {
       excelData.value.datasetInfo.list = setDatasetList(dsInfo.list || [])
       // config
       const config = fromJson(data.config, {})
-      excelData.value.config = config
+      excelData.value.config = setGlobalConfig(config)
       //  univerInfo
       const univerInfo = fromJson(data.univerInfo, {})
       excelData.value.univerInfo = univerInfo
