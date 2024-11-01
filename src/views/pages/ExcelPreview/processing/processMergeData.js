@@ -10,7 +10,7 @@ import { deepCopy } from '@/utils/util'
 export default function processMergeData(cellData, unitId, sheetId) {
   logTitle('[3] processMergeData')
   let mergedData = []
-  let currentMerge = null
+  let currentMerge = {} // 记录对应colKey的合并单元格信息
 
   for (const rowKey in cellData) {
     const row = cellData[rowKey]
@@ -20,23 +20,27 @@ export default function processMergeData(cellData, unitId, sheetId) {
       const colIndex = Number(colKey)
 
       if (cell.custom && cell.custom.isDymamicMerge && cell.custom.isList) {
-        if (!currentMerge) {
-          currentMerge = {
+        console.log('cell ========>', cell)
+        if (!currentMerge[colKey]) {
+          currentMerge[colKey] = {
             startRow: rowIndex,
             startColumn: colIndex,
             endRow: rowIndex,
             endColumn: colIndex,
           }
         } else {
-          if (cellData[currentMerge.startRow][currentMerge.startColumn].v === cell.v) {
-            currentMerge.endRow = rowIndex
-            currentMerge.endColumn = colIndex
+          const sRow = currentMerge[colKey].startRow
+          const sCol = currentMerge[colKey].startColumn
+          if (cellData[sRow][sCol].v === cell.v) {
+            currentMerge[colKey].endRow = rowIndex
+            currentMerge[colKey].endColumn = colIndex
+            console.log('cell.v ========>', cell.v)
           } else {
-            const currentMergeData = getMergeData(currentMerge, unitId, sheetId)
+            const currentMergeData = getMergeData(currentMerge[colKey], unitId, sheetId)
             if (currentMergeData) {
               mergedData.push(currentMergeData)
             }
-            currentMerge = {
+            currentMerge[colKey] = {
               startRow: rowIndex,
               startColumn: colIndex,
               endRow: rowIndex,
@@ -47,11 +51,14 @@ export default function processMergeData(cellData, unitId, sheetId) {
       }
     }
   }
+  console.log('currentMerge ========>', currentMerge)
 
-  if (currentMerge) {
-    const currentMergeData = getMergeData(currentMerge, unitId, sheetId)
-    if (currentMergeData) {
-      mergedData.push(currentMergeData)
+  for (const key in currentMerge) {
+    if (currentMerge[key]) {
+      const currentMergeData = getMergeData(currentMerge[key], unitId, sheetId)
+      if (currentMergeData) {
+        mergedData.push(currentMergeData)
+      }
     }
   }
 
@@ -62,18 +69,20 @@ export default function processMergeData(cellData, unitId, sheetId) {
 // 获取合并数据
 function getMergeData(currentMerge, unitId, sheetId) {
   if (
-    currentMerge.endRow !== currentMerge.startRow ||
-    currentMerge.endColumn !== currentMerge.startColumn
+    currentMerge.endRow === currentMerge.startRow &&
+    currentMerge.endColumn === currentMerge.startColumn
   ) {
-    return {
-      startRow: currentMerge.startRow,
-      startColumn: currentMerge.startColumn,
-      endRow: currentMerge.endRow,
-      endColumn: currentMerge.endColumn,
-      unitId,
-      sheetId,
-      rangeType: 0,
-    }
+    return null
   }
-  return null
+
+  console.log('--------------------------------------------', currentMerge)
+  return {
+    startRow: currentMerge.startRow,
+    startColumn: currentMerge.startColumn,
+    endRow: currentMerge.endRow,
+    endColumn: currentMerge.endColumn,
+    unitId,
+    sheetId,
+    rangeType: 0,
+  }
 }
