@@ -52,9 +52,18 @@
           <TitleBar title="配置信息" tip-pos="left" :titleStyle="{ fontSize: '14px' }" />
         </div>
         <div class="body-content">
-          <b-scrollbar>
-            <div class="p8">right-content</div>
-          </b-scrollbar>
+          <div class="top-tabs">
+            <b-radio-group v-model="activeTab" type="capsule" style="width: 100%">
+              <b-radio label="base">基础</b-radio>
+              <b-radio label="global">全局</b-radio>
+            </b-radio-group>
+          </div>
+          <div class="config-content">
+            <b-scrollbar>
+              <BaseConfig v-if="activeTab === 'base'" />
+              <GlobalConfig v-if="activeTab === 'global'" />
+            </b-scrollbar>
+          </div>
         </div>
       </div>
     </div>
@@ -71,12 +80,15 @@ import { sendMsg } from '@/utils/cross-tab-msg'
 import DatasetConfig from './DatasetConfig.vue'
 import { deepCopy, toJson } from '@/utils/util'
 import { clearEmptyInCellData } from '@/plugins/univer-excel/util'
+import BaseConfig from './BaseConfig.vue'
+import GlobalConfig from './GlobalConfig.vue'
 
 const router = useRouter()
 const route = useRoute()
 
 const {
   excelData,
+  activeTab,
   containerRef,
   title,
   btnLoading,
@@ -190,6 +202,12 @@ async function handlePreview() {
     .right-config {
       width: var(--v-right-width);
       border-left: 1px solid #f0f0f0;
+      .top-tabs {
+        padding: 5px;
+      }
+      .config-content {
+        height: calc(100% - 44px);
+      }
     }
     .title-top {
       height: 42px;

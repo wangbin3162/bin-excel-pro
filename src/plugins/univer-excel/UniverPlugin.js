@@ -154,6 +154,50 @@ export class UniverPlugin {
     return saveData
   }
 
+  // 获取当前选区的所有单元格
+  getCurrentRangeCells(startRow = 0, startColumn = 0, width = 1, height = 1) {
+    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = activeSheet.getRange(startRow, startColumn, width, height)
+    const cells = []
+    range.forEach((row, column, cell) => {
+      cells.push({
+        row,
+        column,
+        cell,
+      })
+    })
+    return cells
+  }
+
+  // 获取当前选区的第一个单元格，也可以理解为点选
+  getCell(startRow = 0, startColumn = 0) {
+    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = activeSheet.getRange(startRow, startColumn, 1, 1)
+    const cells = []
+    range.forEach((row, column, cell) => {
+      cells.push({
+        row,
+        column,
+        cell,
+      })
+    })
+    return cells[0]
+  }
+
+  getCellByLetter(letter) {
+    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = activeSheet.getRange(letter)
+    const cells = []
+    range.forEach((row, column, cell) => {
+      cells.push({
+        row,
+        column,
+        cell,
+      })
+    })
+    return cells[0]
+  }
+
   // 获取所有工作表数据
   getAllSheets() {
     const sheets = this.getWorkBook().sheets

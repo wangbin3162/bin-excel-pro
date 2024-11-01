@@ -71,6 +71,7 @@ export default function useUniverRender(isPreview = false) {
       )
       univer = UniverPlugin.init(containerRef.value)
       univer.createSheet(excelData.value.univerInfo)
+
       // 事件监听
       // univer.univerAPI.getHooks().onStarting(() => {
       //   console.log('onStarting')

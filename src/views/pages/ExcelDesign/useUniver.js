@@ -14,11 +14,13 @@ const status = {
     univerInfo: {}, // 存储的信息
     config: {}, // 全局配置
   }),
+  currentRange: ref({}),
+  univer: ref({}),
 }
 
 // 报表数据状态
 export function useUniverStatus() {
-  const { excelData } = status
+  const { excelData, univer, currentRange } = status
 
   const title = computed({
     get: () => excelData.value.name,
@@ -30,7 +32,21 @@ export function useUniverStatus() {
     },
   })
 
+  const currentPosition = computed({
+    get: () => {
+      const { startRow, startColumn } = currentRange.value
+      return `${startRow},${startColumn}`
+    },
+  })
+  const currentLetter = computed({
+    get: () => {
+      const { startRow, startColumn } = currentRange.value
+      return getLetter(startRow, startColumn)
+    },
+  })
+
   function initData(data) {
+    univer.value = null
     if (!data) {
       excelData.value = {
         id: '',
@@ -64,6 +80,10 @@ export function useUniverStatus() {
 
   return {
     excelData,
+    currentRange,
+    currentPosition,
+    currentLetter,
+    univer,
     title,
     initData,
   }
@@ -71,21 +91,30 @@ export function useUniverStatus() {
 
 // 报表设计相关操作
 export function useUniverDesign() {
-  const { excelData, title } = useUniverStatus()
-  let univer = null
+  const { excelData, univer, currentRange, title } = useUniverStatus()
   const containerRef = ref(null)
   const btnLoading = ref(false)
+  const activeTab = ref('base') // base, global
 
   onMounted(() => {
-    univer = UniverPlugin.init(containerRef.value)
-    univer.createSheet(excelData.value.univerInfo)
+    univer.value = UniverPlugin.init(containerRef.value)
+    univer.value.createSheet(excelData.value.univerInfo)
     // 监听放置功能
-    univer.univerAPI.getSheetHooks().onCellDrop(sellDrop)
+    univer.value.univerAPI.getSheetHooks().onCellDrop(sellDrop)
+
+    const activeWorkbook = univer.value.univerAPI.getActiveWorkbook()
+    activeWorkbook.onSelectionChange(handleSelectionChange)
   })
 
   onBeforeUnmount(() => {
-    univer?.destory()
+    univer.value?.destory()
   })
+
+  function handleSelectionChange(selection) {
+    // console.log(selection)
+    if (selection.length > 0) currentRange.value = selection[0]
+    activeTab.value = 'base'
+  }
 
   // 单元格放置事件
   function sellDrop({ dataTransfer, location }) {
@@ -102,7 +131,7 @@ export function useUniverDesign() {
     const { col, row } = location
     const letter = getLetter(row, col)
     console.log(`location ========>[${letter}]`, location)
-    const sheet = univer.univerAPI.getActiveWorkbook().getActiveSheet()
+    const sheet = univer.value.univerAPI.getActiveWorkbook().getActiveSheet()
     const range = sheet.getRange(letter)
     range.setValue(value)
     range.setWrapStrategy(2)
@@ -111,13 +140,13 @@ export function useUniverDesign() {
   // 导入excel
   function importExcel() {
     // univer.importExcel()
-    univer.destoryWorkbook()
-    univer.createSheet(newWorkbook())
+    univer.value.destoryWorkbook()
+    univer.value.createSheet(newWorkbook())
   }
 
   // 下载
   function download() {
-    univer.downloadExcel()
+    univer.value.downloadExcel()
   }
 
   // 关闭
@@ -136,11 +165,12 @@ export function useUniverDesign() {
 
   // 获取最新的univer 工作簿信息
   function setUniverInfo() {
-    if (!univer) return
-    excelData.value.univerInfo = univer.getWorkBook()
+    if (!univer.value) return
+    excelData.value.univerInfo = univer.value.getWorkBook()
   }
 
   return {
+    activeTab,
     excelData,
     univer,
     containerRef,
