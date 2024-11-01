@@ -21,11 +21,14 @@ export default function processFormula(
   cellsWithFormula,
 ) {
   logTitle('[2] processFormula')
+  const newCellData = deepCopy(cellData) // 新的单元格数据
   // 遍历带有函数的单元格
   for (const letter in cellsWithFormula) {
-    calcCellFunction(letter, cellData, originalCellData, cellsWidthOffset) // 根据当前的单元格标记获取cellData的数据
+    calcCellFunction(letter, newCellData, originalCellData, cellsWidthOffset) // 根据当前的单元格标记获取cellData的数据
   }
+
   console.log('====> process result', cellData)
+  return { newCellData }
 }
 
 // 计算单元格公式
@@ -61,9 +64,10 @@ function calcCellFunction(letter, cellData, rawCellData, cellsWidthOffset) {
       if (cell.custom?.isList) {
         const oriCell = getCellDataByLetter(rawCellData, letter)
         if (oriCell && isWrappedWithHashBrackets(oriCell.v)) {
-          // console.log('letter ========>', letter, rowKey, updateCellIndex(letter, rowKey + 1))
           // 获取新的单元格标记
           newLetter = updateCellIndex(letter, rowKey + 1)
+          // console.log('cell ========>', cell, oriCell, letter, rowKey, newLetter)
+          // console.log('letter ========>', letter, rowKey, newLetter)
         }
       }
       cellKeys.push(newLetter)

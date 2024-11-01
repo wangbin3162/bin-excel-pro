@@ -184,6 +184,7 @@ export class UniverPlugin {
     return cells[0]
   }
 
+  // 获取当前选区的第一个单元格，也可以理解为点选
   getCellByLetter(letter) {
     const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
     const range = activeSheet.getRange(letter)
@@ -196,6 +197,20 @@ export class UniverPlugin {
       })
     })
     return cells[0]
+  }
+
+  // 设置单元格的值
+  setCell(row, column, cellValue) {
+    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = activeSheet.getRange(row, column, 1, 1)
+    range.setValue(cellValue)
+  }
+
+  // 设置单元格的值
+  setCellByLetter(letter, cellValue) {
+    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = activeSheet.getRange(letter)
+    range.setValue(cellValue)
   }
 
   // 获取所有工作表数据

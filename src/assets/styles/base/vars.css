@@ -94,4 +94,6 @@
   --bin-fill-color-2: var(--v-g-fill-color-2);
   --bin-fill-color-3: var(--v-g-fill-color-3);
   --bin-fill-color-4: var(--v-g-fill-color-4);
+
+  --bin-border-radius-default: 4px;
 }

@@ -1,5 +1,6 @@
 import initBaseCellData from './initBaseCellData'
 import processFormula from './processFormula'
+import processMergeData from './processMergeData'
 import { log, logTitle, logLine } from './log'
 
 /**
@@ -9,23 +10,27 @@ import { log, logTitle, logLine } from './log'
  * @param {*} dataList 已经请求的数据集数据
  */
 export default function cellDataConverter(univerInfo, dataList, dataset) {
-  univerInfo.sheetOrder.forEach(key => {
+  univerInfo.sheetOrder.forEach(sheetId => {
     // 获取每一个sheet
-    const sheet = univerInfo.sheets[key]
+    const sheet = univerInfo.sheets[sheetId]
     const oriCellData = sheet.cellData
     logTitle('[0] cellDataConverter')
     log && console.log('univerInfo ========>', univerInfo)
 
-    const { newCellData, cellsWidthOffset, cellsWithFormula } = initBaseCellData(
+    const baseResult = initBaseCellData(oriCellData, dataList, dataset)
+
+    const formulaResult = processFormula(
       oriCellData,
-      dataList,
-      dataset,
+      baseResult.newCellData,
+      baseResult.cellsWidthOffset,
+      baseResult.cellsWithFormula,
     )
 
-    processFormula(oriCellData, newCellData, cellsWidthOffset, cellsWithFormula)
+    const { mergedData } = processMergeData(baseResult.newCellData, univerInfo.id, sheetId)
 
     logLine()
-    sheet.cellData = newCellData
+    sheet.cellData = formulaResult.newCellData
+    sheet.mergeData = [...sheet.mergeData, ...mergedData]
   })
 
   return univerInfo

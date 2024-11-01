@@ -6,6 +6,7 @@ import {
   getHashBracketsPropertys,
 } from './helper'
 import { getLetter } from '@/plugins/univer-excel/util'
+import { deepMerge } from '@/utils/util'
 
 const log = false
 
@@ -41,17 +42,18 @@ export default function initBaseCellData(cellData, dataList, dataset) {
         for (const colKey in row) {
           const cell = row[colKey]
           const newCell = getValItemFromObjByString(cell, dataItem, dataset)
+
+          newRow[colKey] = deepMerge(newCell, {
+            custom: {
+              isList: true,
+            },
+          })
+
           // 判断单元格是否包含公式
           if (cell.f && cell.f.startsWith('=')) {
             cellsWithFormula[getLetter(newRowIndex, colKey)] = newCell
           }
-          newRow[colKey] = {
-            ...newCell,
-            // 扩展自定义字段，标记当前行是动态生成的行，用于后面进行处理
-            custom: {
-              isList: true,
-            },
-          }
+
           log && console.log(`更新 #Cell [${getLetter(newRowIndex, colKey)}]====>`, newCell)
         }
         newCellData[newRowIndex] = newRow

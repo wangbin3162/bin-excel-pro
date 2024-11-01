@@ -18,7 +18,7 @@ const mockData = {
         english: 88,
       },
       {
-        name: '李丽娟',
+        name: '王建国',
         age: 32,
         gender: '0',
         address: '上海',
@@ -38,7 +38,7 @@ const mockData = {
         english: 87,
       },
       {
-        name: '刘美华',
+        name: '张志强',
         age: 30,
         gender: '0',
         address: '深圳',
@@ -56,6 +56,16 @@ const mockData = {
         chinese: 87,
         maths: 93,
         english: 89,
+      },
+      {
+        name: '赵晓燕',
+        age: 35,
+        gender: '0',
+        address: '杭州',
+        birthday: '1989-02-28',
+        chinese: 91,
+        maths: 88,
+        english: 90,
       },
       {
         name: '赵晓燕',
