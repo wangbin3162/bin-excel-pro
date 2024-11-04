@@ -1,10 +1,10 @@
 import { ref, toRaw, onMounted, onBeforeUnmount } from 'vue'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
-import { setDatasetList } from '@/views/pages/ExcelDesign/useDataset'
 import { deepCopy, fromJson } from '@/utils/util'
-import { getDatasetData } from '@/api//modules/dataset.api'
-import cellDataConverter from './processing'
+import { getDatasetData } from '@/api/modules/dataset.api'
+import { setDatasetList } from '../../ExcelDesign/hooks/useDataset'
+import cellDataConverter from '../processing'
 
 const status = {
   excelData: ref({

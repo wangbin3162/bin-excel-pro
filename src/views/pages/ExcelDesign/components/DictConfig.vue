@@ -1,19 +1,26 @@
 <template>
   <div class="dict-config">
-    <b-collapse-wrap title="字典配置" collapse shadow="none">
-      <template #right>
-        <b-button type="text" icon="plus" @click="handleAdd"></b-button>
-      </template>
+    <b-card
+      header="字典配置"
+      shadow="never"
+      head-tip
+      :bordered="false"
+      :body-style="{ padding: '8px 0' }"
+    >
+      <b-table :columns="columns" :data="dictConfig" edit-table edit-table-detail>
+        <template #action="{ index }">
+          <b-button type="text" icon="edit" @click="handEdit(index)" />
+          <b-button type="text" icon="unorderedlist" @click="handMapping(index)" />
+          <b-button type="text" text-color="danger" icon="delete" @click="handleRemove(index)" />
+        </template>
+      </b-table>
+
       <div class="pt-8">
-        <b-table :columns="columns" :data="dictConfig" edit-table edit-table-detail>
-          <template #action="{ index }">
-            <b-button type="text" icon="edit" @click="handEdit(index)" />
-            <b-button type="text" icon="unorderedlist" @click="handMapping(index)" />
-            <b-button type="text" text-color="danger" icon="delete" @click="handleRemove(index)" />
-          </template>
-        </b-table>
+        <b-button icon="plus" dashed style="width: 100%; border-radius: 8px" @click="handleAdd">
+          新增字典
+        </b-button>
       </div>
-    </b-collapse-wrap>
+    </b-card>
 
     <b-modal v-model="visible" title="字典配置">
       <div v-if="visible">
@@ -44,9 +51,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useUniverStatus } from '../useUniver'
-import { BModal } from 'bin-ui-design'
-import { newDict } from '../useConfig'
+import { useUniverStatus } from '../hooks/useUniver'
+import { newDict } from '../hooks/useConfig'
 import DictMapping from './DictMapping.vue'
 
 const { dictConfig } = useUniverStatus()

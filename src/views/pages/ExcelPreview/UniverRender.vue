@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import useUniverRender from './useUniverRender'
+import useUniverRender from './hooks/useUniverRender'
 
 const { containerRef } = useUniverRender(true)
 </script>

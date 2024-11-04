@@ -3,9 +3,9 @@ import { MessageBox } from 'bin-ui-design'
 import { fromJson } from '@/utils/util'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
-import { setDatasetList } from '@/views/pages/ExcelDesign/useDataset'
-import { setGlobalConfig } from '@/views/pages/ExcelDesign/useConfig'
 import { getLetter } from '@/plugins/univer-excel/util'
+import { setDatasetList } from './useDataset'
+import { setGlobalConfig } from './useConfig'
 
 const status = {
   excelData: ref({
@@ -51,6 +51,12 @@ export function useUniverStatus() {
   // 字典配置
   const dictConfig = computed(() => config.value.dictConfig || [])
 
+  // 自定义脚本
+  const customScripts = computed({
+    get: () => config.value.customScripts || [],
+    set: val => (excelData.value.config.customScripts = val),
+  })
+
   function initData(data) {
     univer.value = null
     if (!data) {
@@ -91,6 +97,7 @@ export function useUniverStatus() {
     currentLetter,
     config,
     dictConfig,
+    customScripts,
     univer,
     title,
     initData,

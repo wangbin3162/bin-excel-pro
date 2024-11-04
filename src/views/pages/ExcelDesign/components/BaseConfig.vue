@@ -59,7 +59,7 @@
 
 <script setup>
 import { ref, watch, nextTick } from 'vue'
-import { useUniverStatus } from './useUniver'
+import { useUniverStatus } from '../hooks/useUniver'
 
 const { univer, currentRange, currentPosition, currentLetter, dictConfig } = useUniverStatus()
 

@@ -72,16 +72,16 @@
 
 <script setup>
 import { toRaw } from 'vue'
-import { Message } from 'bin-ui-design'
-import { useUniverDesign, debugStatus } from './useUniver'
 import { useRouter, useRoute } from 'vue-router'
+import { Message } from 'bin-ui-design'
 import * as api from '@/api/modules/excel.api'
 import { sendMsg } from '@/utils/cross-tab-msg'
-import DatasetConfig from './DatasetConfig.vue'
 import { deepCopy, toJson } from '@/utils/util'
 import { clearEmptyInCellData } from '@/plugins/univer-excel/util'
-import BaseConfig from './BaseConfig.vue'
-import GlobalConfig from './GlobalConfig.vue'
+import { useUniverDesign, debugStatus } from './hooks/useUniver'
+import DatasetConfig from './components/DatasetConfig.vue'
+import BaseConfig from './components/BaseConfig.vue'
+import GlobalConfig from './components/GlobalConfig.vue'
 
 const router = useRouter()
 const route = useRoute()

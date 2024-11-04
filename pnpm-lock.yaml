@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@highlightjs/vue-plugin':
+        specifier: ^2.1.0
+        version: 2.1.0(highlight.js@11.10.0)(vue@3.5.12)
       '@univerjs/core':
         specifier: ^0.4.2
         version: 0.4.2(@grpc/grpc-js@1.9.14)(react@18.3.1)(rxjs@7.8.1)
@@ -107,6 +110,9 @@ importers:
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5
+      highlight.js:
+        specifier: ^11.10.0
+        version: 11.10.0
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -403,6 +409,12 @@ packages:
     resolution: {integrity: sha512-AiXO/bfe9bmxBjxxtYxFAXGZvMaN5s8kO+jBHAJCON8rJoB5YS/D6X7ZNc6XQkuHNmyl4CYaMI1fJ/Gn27RGGw==}
     engines: {node: '>=6'}
     hasBin: true
+
+  '@highlightjs/vue-plugin@2.1.0':
+    resolution: {integrity: sha512-E+bmk4ncca+hBEYRV2a+1aIzIV0VSY/e5ArjpuSN9IO7wBJrzUE2u4ESCwrbQD7sAy+jWQjkV5qCCWgc+pu7CQ==}
+    peerDependencies:
+      highlight.js: ^11.0.1
+      vue: ^3
 
   '@humanfs/core@0.19.0':
     resolution: {integrity: sha512-2cbWIHbZVEweE853g8jymffCA+NCMiuqeECeBBLm8dg2oFdjuGJhgN4UAbI+6v0CKbbhvtXA4qV8YR5Ji86nmw==}
@@ -1497,6 +1509,10 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  highlight.js@11.10.0:
+    resolution: {integrity: sha512-SYVnVFswQER+zu1laSya563s+F8VDGt7o35d4utbamowvUNLLMovFqwCLSocpZTz3MgaSRA1IbqRWZv97dtErQ==}
+    engines: {node: '>=12.0.0'}
 
   human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
@@ -2739,6 +2755,11 @@ snapshots:
       long: 5.2.3
       protobufjs: 7.4.0
       yargs: 17.7.2
+
+  '@highlightjs/vue-plugin@2.1.0(highlight.js@11.10.0)(vue@3.5.12)':
+    dependencies:
+      highlight.js: 11.10.0
+      vue: 3.5.12
 
   '@humanfs/core@0.19.0': {}
 
@@ -4396,6 +4417,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  highlight.js@11.10.0: {}
 
   human-signals@2.1.0: {}
 

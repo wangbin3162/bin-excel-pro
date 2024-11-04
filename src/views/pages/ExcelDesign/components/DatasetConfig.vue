@@ -64,7 +64,7 @@
 
 <script setup>
 import { toJson } from '@/utils/util'
-import { useUniverStatus } from './useUniver'
+import { useUniverStatus } from '../hooks/useUniver'
 
 const { excelData } = useUniverStatus()
 

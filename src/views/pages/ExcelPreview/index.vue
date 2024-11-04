@@ -11,7 +11,7 @@ import { watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getReportDetail } from '@/api/modules/excel.api'
 import UniverRender from './UniverRender.vue'
-import useUniverRender from './useUniverRender'
+import useUniverRender from './hooks/useUniverRender'
 
 defineOptions({ name: 'ExcelPreview' })
 
