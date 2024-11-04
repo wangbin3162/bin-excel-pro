@@ -46,6 +46,11 @@ export function useUniverStatus() {
     },
   })
 
+  const config = computed(() => excelData.value?.config)
+
+  // 字典配置
+  const dictConfig = computed(() => config.value.dictConfig || [])
+
   function initData(data) {
     univer.value = null
     if (!data) {
@@ -84,6 +89,8 @@ export function useUniverStatus() {
     currentRange,
     currentPosition,
     currentLetter,
+    config,
+    dictConfig,
     univer,
     title,
     initData,

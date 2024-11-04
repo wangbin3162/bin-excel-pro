@@ -68,6 +68,7 @@ export default function useUniverRender(isPreview = false) {
         deepCopy(toRaw(excelData.value.univerInfo)),
         deepCopy(toRaw(dataList.value)),
         deepCopy(toRaw(excelData.value.datasetInfo.list)),
+        deepCopy(toRaw(excelData.value.config)),
       )
       univer = UniverPlugin.init(containerRef.value)
       univer.createSheet(excelData.value.univerInfo)

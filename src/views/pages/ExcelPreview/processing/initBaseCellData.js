@@ -7,6 +7,7 @@ import {
 } from './helper'
 import { getLetter } from '@/plugins/univer-excel/util'
 import { deepMerge } from '@/utils/util'
+import { processMapping } from './processMapping'
 
 const log = false
 
@@ -16,11 +17,12 @@ const log = false
  * @param {*} dataList 已经请求的数据集数据
  * @param {*} dataset 数据集信息
  */
-export default function initBaseCellData(cellData, dataList, dataset) {
+export default function initBaseCellData(cellData, dataList, dataset, config) {
   logTitle('[1] initBaseCellData')
   const newCellData = {} // 新的单元格数据
   const cellsWidthOffset = {} // 有偏移的单元格
   const cellsWithFormula = {} // 包含公式的单元格
+  // 需要转换的单元格
 
   let currentRowIndex = 0 // 当前需要追加的行索引
   let totalOffset = 0 // 总偏移量
@@ -42,17 +44,15 @@ export default function initBaseCellData(cellData, dataList, dataset) {
         for (const colKey in row) {
           const cell = row[colKey]
           const newCell = getValItemFromObjByString(cell, dataItem, dataset)
+          const newCellMapped = processMapping(newCell, config.dictConfig || [])
 
-          newRow[colKey] = deepMerge(newCell, {
+          parseFormula(cell, cellsWithFormula, newRowIndex, colKey, newCellMapped)
+
+          newRow[colKey] = deepMerge(newCellMapped, {
             custom: {
               isList: true,
             },
           })
-
-          // 判断单元格是否包含公式
-          if (cell.f && cell.f.startsWith('=')) {
-            cellsWithFormula[getLetter(newRowIndex, colKey)] = newCell
-          }
 
           log && console.log(`更新 #Cell [${getLetter(newRowIndex, colKey)}]====>`, newCell)
         }
@@ -69,11 +69,9 @@ export default function initBaseCellData(cellData, dataList, dataset) {
           cellsWidthOffset[getLetter(rowKey, colKey)] = getLetter(currentRowIndex, colKey)
         }
         const newCell = parseData(cell, dataList, dataset)
-        // 判断单元格是否包含公式
-        if (cell.f && cell.f.startsWith('=')) {
-          cellsWithFormula[getLetter(currentRowIndex, colKey)] = newCell
-        }
-        newRow[colKey] = newCell
+        const newCellMapped = processMapping(newCell, config.dictConfig || [])
+        parseFormula(cell, cellsWithFormula, currentRowIndex, colKey, newCellMapped)
+        newRow[colKey] = newCellMapped
         log && console.log(`更新 Cell [${getLetter(currentRowIndex, colKey)}]====>`, newCell)
       }
       newCellData[currentRowIndex] = newRow
@@ -125,6 +123,14 @@ function getCorrespondingDataList(rowData, dataList) {
   }
   // 返回对应的dataList中的list
   return correspondingDataList
+}
+
+//
+function parseFormula(cell, cellsWithFormula, rowKey, colKey, newCell) {
+  // 判断单元格是否包含公式
+  if (cell.f && cell.f.startsWith('=')) {
+    cellsWithFormula[getLetter(rowKey, colKey)] = newCell
+  }
 }
 
 // 处理数据

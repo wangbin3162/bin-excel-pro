@@ -43,18 +43,14 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useUniverStatus } from '../useUniver'
 import { BModal } from 'bin-ui-design'
 import { newDict } from '../useConfig'
 import DictMapping from './DictMapping.vue'
 
-const { excelData } = useUniverStatus()
+const { dictConfig } = useUniverStatus()
 
-const config = computed(() => excelData.value?.config)
-
-// 字典配置
-const dictConfig = computed(() => config.value.dictConfig || [])
 const columns = [
   { title: '字典名称', key: 'dictName' },
   { title: '字典编码', key: 'dictCode' },
