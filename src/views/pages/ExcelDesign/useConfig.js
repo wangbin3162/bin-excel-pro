@@ -20,7 +20,7 @@ export function newDict(dict = {}) {
     {
       dictName: '', // 字典名称
       dictCode: '', // 字典编码
-      dictMap: [], // 字典数据
+      mapping: [], // 字典数据
     },
     dict,
   )

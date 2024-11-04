@@ -14,6 +14,6 @@ const { excelData, currentRange } = useUniverStatus()
 
 <style scoped>
 .global-config {
-  padding: 8px;
+  padding: 5px 8px;
 }
 </style>

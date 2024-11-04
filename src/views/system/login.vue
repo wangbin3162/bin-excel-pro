@@ -146,7 +146,7 @@ async function loginSuccess(data) {
 <style scoped>
 .page-login {
   user-select: none;
-  background-color: #f0f2f5;
+  background-color: #fafafa;
   height: 100vh;
   position: relative;
   background-image: url('@/assets/images/login-background.svg');
