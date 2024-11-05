@@ -8,11 +8,10 @@
     width="1400px"
     top="50px"
     append-to-body
-    screen-center
     destroy-on-close
     @opened="render = true"
   >
-    <div class="code-editor">
+    <div class="code-editor" :style="{ height }">
       <template v-if="render">
         <div class="fun">
           <p class="top">
@@ -48,7 +47,7 @@
         </div>
       </template>
 
-      <b-skeleton animation v-else :rows="15"></b-skeleton>
+      <b-skeleton animation v-else :rows="10"></b-skeleton>
     </div>
     <template #footer>
       <div flex="main:justify">
@@ -105,6 +104,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  height: {
+    type: String,
+    default: '540px',
+  },
 })
 
 const data = defineModel()
@@ -145,6 +148,7 @@ defineExpose({
     width: calc(100% - 480px);
     font-size: 14px;
     color: #b478cf;
+    padding-right: 8px;
     .params {
       color: var(--bin-color-primary);
     }

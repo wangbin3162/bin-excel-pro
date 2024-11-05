@@ -1,10 +1,11 @@
-import { ref, toRaw, onMounted, onBeforeUnmount } from 'vue'
+import { ref, toRaw, onMounted, onBeforeUnmount, computed } from 'vue'
 import { newWorkbook } from '@/plugins/univer-excel/Workbook'
 import { UniverPlugin } from '@/plugins/univer-excel/UniverPlugin'
 import { deepCopy, fromJson } from '@/utils/util'
 import { getDatasetData } from '@/api/modules/dataset.api'
 import { setDatasetList } from '../../ExcelDesign/hooks/useDataset'
 import cellDataConverter from '../processing'
+import { useUniverScripts } from './useUniverScripts'
 
 const status = {
   excelData: ref({
@@ -15,17 +16,38 @@ const status = {
     config: {}, // 全局配置
   }),
   dataList: ref({}), // 数据集数据
+  univer: ref({}),
+  rawData: ref({}), // 原始数据
 }
 
 // 渲染hooks
 export default function useUniverRender(isPreview = false) {
-  const { excelData, dataList } = status
-  let univer = null
+  const { excelData, univer, rawData, dataList } = status
   const containerRef = ref(null)
+
+  const config = computed({
+    get: () => excelData.value.config || {},
+    set: val => (excelData.value.config = val),
+  })
+
+  // 字典配置
+  const dictConfig = computed({
+    get: () => excelData.value.config.dictConfig || [],
+    set: val => (excelData.value.config.dictConfig = val),
+  })
+
+  // 自定义脚本
+  const customScripts = computed({
+    get: () => excelData.value.config.customScripts || {},
+    set: val => (excelData.value.config.customScripts = val),
+  })
 
   // 初始化数据
   async function initData(data) {
+    univer.value = null
+
     if (!data) return
+    rawData.value = data
 
     excelData.value = {
       ...data,
@@ -63,33 +85,38 @@ export default function useUniverRender(isPreview = false) {
   // 如果是预览模式，则执行初始化
   if (isPreview) {
     onMounted(() => {
+      // 缓存4个原始数据
+      const rawUniverInfo = deepCopy(toRaw(excelData.value.univerInfo))
+      const rawConfig = deepCopy(toRaw(excelData.value.config))
+      const rawDataList = deepCopy(toRaw(dataList.value))
+      const rawDataset = deepCopy(toRaw(excelData.value.datasetInfo.list))
       // 处理univer数据
       excelData.value.univerInfo = cellDataConverter(
-        deepCopy(toRaw(excelData.value.univerInfo)),
-        deepCopy(toRaw(dataList.value)),
-        deepCopy(toRaw(excelData.value.datasetInfo.list)),
-        deepCopy(toRaw(excelData.value.config)),
+        rawUniverInfo,
+        rawDataList,
+        rawDataset,
+        rawConfig,
       )
-      univer = UniverPlugin.init(containerRef.value)
-      univer.createSheet(excelData.value.univerInfo)
+      univer.value = UniverPlugin.init(containerRef.value)
+      univer.value.createSheet(excelData.value.univerInfo)
 
       // 事件监听
-      // univer.univerAPI.getHooks().onStarting(() => {
-      //   console.log('onStarting')
-      // })
-      // univer.univerAPI.getHooks().onReady(() => {
-      //   console.log('onReady')
-      // })
-      // univer.univerAPI.getHooks().onRendered(() => {
-      //   console.log('onRendered')
-      // })
-      // univer.univerAPI.getHooks().onSteady(() => {
-      //   console.log('onSteady')
-      // })
+      univer.value.univerAPI.getHooks().onRendered(() => {
+        const configData = {
+          univerInfo: fromJson(rawData.value.univerInfo, {}),
+          dataset: rawDataset,
+          config: rawConfig,
+        }
+        const data = {
+          univerInfo: toRaw(excelData.value.univerInfo),
+          dataList: rawDataList,
+        }
+        useUniverScripts(toRaw(univer.value), configData, data)
+      })
     })
 
     onBeforeUnmount(() => {
-      univer?.destory()
+      univer.value?.destory()
     })
   }
 
@@ -97,6 +124,9 @@ export default function useUniverRender(isPreview = false) {
     excelData,
     dataList,
     initData,
+    config,
+    dictConfig,
+    customScripts,
     containerRef,
   }
 }

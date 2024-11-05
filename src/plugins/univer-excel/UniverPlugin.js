@@ -154,10 +154,29 @@ export class UniverPlugin {
     return saveData
   }
 
-  // 获取当前选区的所有单元格
-  getCurrentRangeCells(startRow = 0, startColumn = 0, width = 1, height = 1) {
+  // 获取选区
+  getRange(startRow = 0, startColumn = 0, width = 1, height = 1) {
     const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
     const range = activeSheet.getRange(startRow, startColumn, width, height)
+    return range
+  }
+
+  // 根据字符获取选区如 A1或者A1:B2
+  getRangeByLetter(letter) {
+    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
+    const range = activeSheet.getRange(letter)
+    return range
+  }
+
+  // 获取当前选区的第一个单元格range
+  getCellRange(startRow = 0, startColumn = 0) {
+    const range = this.getRange(startRow, startColumn, 1, 1)
+    return range
+  }
+
+  // 获取当前选区的所有单元格
+  getCellsByRange(startRow = 0, startColumn = 0, width = 1, height = 1) {
+    const range = this.getRange(startRow, startColumn, width, height)
     const cells = []
     range.forEach((row, column, cell) => {
       cells.push({
@@ -169,10 +188,9 @@ export class UniverPlugin {
     return cells
   }
 
-  // 获取当前选区的第一个单元格，也可以理解为点选
-  getCell(startRow = 0, startColumn = 0) {
-    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
-    const range = activeSheet.getRange(startRow, startColumn, 1, 1)
+  // 根据letter获取所有cells
+  getCellsByLetter(letter) {
+    const range = this.getRangeByLetter(letter)
     const cells = []
     range.forEach((row, column, cell) => {
       cells.push({
@@ -181,35 +199,36 @@ export class UniverPlugin {
         cell,
       })
     })
+    return cells
+  }
+
+  // 获取单元格
+  getCell(startRow = 0, startColumn = 0) {
+    const cells = this.getCellsByRange(startRow, startColumn, 1, 1)
     return cells[0]
   }
 
-  // 获取当前选区的第一个单元格，也可以理解为点选
+  // 根据letter获取单元格
   getCellByLetter(letter) {
-    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
-    const range = activeSheet.getRange(letter)
-    const cells = []
-    range.forEach((row, column, cell) => {
-      cells.push({
-        row,
-        column,
-        cell,
-      })
-    })
+    const cells = this.getCellsByLetter(letter)
     return cells[0]
+  }
+
+  // 设置区域的值
+  setRange(row, column, width = 1, height = 1, cellValue) {
+    const range = this.getRange(row, column, width, height)
+    range.setValue(cellValue)
   }
 
   // 设置单元格的值
   setCell(row, column, cellValue) {
-    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
-    const range = activeSheet.getRange(row, column, 1, 1)
+    const range = this.getCell(row, column)
     range.setValue(cellValue)
   }
 
   // 设置单元格的值
   setCellByLetter(letter, cellValue) {
-    const activeSheet = this.univerAPI.getActiveWorkbook().getActiveSheet()
-    const range = activeSheet.getRange(letter)
+    const range = this.getRangeByLetter(letter)
     range.setValue(cellValue)
   }
 

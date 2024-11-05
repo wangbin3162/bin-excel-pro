@@ -8,6 +8,7 @@
 </template>
 
 <script setup>
+import { Message } from 'bin-ui-design'
 import { ref, watch } from 'vue'
 defineOptions({ name: 'JsonSave' })
 
@@ -33,8 +34,9 @@ watch(
 function save() {
   try {
     data.value = JSON.parse(jsonStr.value)
+    Message.success('保存成功')
   } catch (e) {
-    return false
+    console.log('e ========>', e)
   }
 }
 </script>

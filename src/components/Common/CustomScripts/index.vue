@@ -10,7 +10,7 @@
     <CustomScriptsEditor
       ref="editorRef"
       v-model="data"
-      :title="label + '编辑器'"
+      :title="modalTitle || label + '编辑器'"
       :funcExplain="funcExplain"
       :arguments="params"
       :paramsDesc="paramsDesc"
@@ -30,6 +30,9 @@ const props = defineProps({
   label: {
     type: String,
     default: '自定义脚本',
+  },
+  modalTitle: {
+    type: String,
   },
   // 函数说明
   funcExplain: {

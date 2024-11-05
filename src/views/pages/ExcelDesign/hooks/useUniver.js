@@ -46,14 +46,20 @@ export function useUniverStatus() {
     },
   })
 
-  const config = computed(() => excelData.value?.config)
+  const config = computed({
+    get: () => excelData.value.config || {},
+    set: val => (excelData.value.config = val),
+  })
 
   // 字典配置
-  const dictConfig = computed(() => config.value.dictConfig || [])
+  const dictConfig = computed({
+    get: () => excelData.value.config.dictConfig || [],
+    set: val => (excelData.value.config.dictConfig = val),
+  })
 
   // 自定义脚本
   const customScripts = computed({
-    get: () => config.value.customScripts || [],
+    get: () => excelData.value.config.customScripts || {},
     set: val => (excelData.value.config.customScripts = val),
   })
 

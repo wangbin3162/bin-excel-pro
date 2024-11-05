@@ -1,7 +1,7 @@
 <template>
   <div class="script-config mt-8">
     <b-card
-      header="脚本配置"
+      header="自定义脚本"
       shadow="never"
       head-tip
       :bordered="false"
@@ -15,10 +15,11 @@
             <CustomScripts
               v-model="customScripts.funcBody"
               :arguments="customScripts.arguments"
-              :paramsDesc="[]"
-              :exampleDesc="[]"
+              :paramsDesc="paramsDesc"
+              :exampleDesc="exampleDesc"
               style="display: inline-flex; width: auto"
               label=""
+              modalTitle="自定义脚本"
               funcExplain="全局脚本，可以通过提供的脚本进行更灵活的配置和设置"
             />
           </div>
@@ -36,7 +37,7 @@ import { useScriptsParams } from '../hooks/useScriptsParams'
 
 const { customScripts } = useUniverStatus()
 
-useScriptsParams()
+const { paramsDesc, exampleDesc } = useScriptsParams()
 </script>
 
 <style scoped></style>

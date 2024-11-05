@@ -20,18 +20,7 @@
       <b-form-item label="公式">
         <b-input v-model="currentCell.f" type="textarea" @enter="changeValue" @blur="changeValue" />
       </b-form-item>
-      <b-divider></b-divider>
-
-      <b-form-item label="动态合并">
-        <template #label>
-          <b-tooltip content="设置为动态合并后，单元格的合并区域会根据内容自动调整." theme="light">
-            <label class="underline-help">动态合并</label>
-          </b-tooltip>
-        </template>
-
-        <b-switch v-model="isDymamicMerge" @change="changeMerge" size="small"></b-switch>
-      </b-form-item>
-      <b-divider></b-divider>
+      <b-divider style="margin: 12px 0" />
 
       <b-form-item label="映射转换">
         <template #label>
@@ -49,10 +38,17 @@
           ></b-option>
         </b-select>
       </b-form-item>
+      <b-divider style="margin: 12px 0" />
 
-      {{ dictConfig }}
-      <b-divider></b-divider>
-      {{ currentCell }}
+      <b-form-item label="动态合并">
+        <template #label>
+          <b-tooltip content="设置为动态合并后，单元格的合并区域会根据内容自动调整." theme="light">
+            <label class="underline-help">动态合并</label>
+          </b-tooltip>
+        </template>
+
+        <b-switch v-model="isDymamicMerge" @change="changeMerge" size="small"></b-switch>
+      </b-form-item>
     </b-form>
   </div>
 </template>
