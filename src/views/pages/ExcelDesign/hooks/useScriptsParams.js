@@ -135,6 +135,12 @@ export function getCellsByRange(range) {}
 export function clearEmptyInCellData(cellData) {}
 
 /**
+ * 根据cellData获取最大行和列
+ * @param {*} cellData
+ */
+export function getMaxRowColumn(cellData) {}
+
+/**
  * 根据字符串解析出单元格标识字段，如A1,B2,C3
  * @param {*} str
  * @returns
@@ -142,7 +148,9 @@ export function clearEmptyInCellData(cellData) {}
 export function getCellIdentifiers(str) {}
 `
 
-  const utilStr = `// 生成唯一id
+  const utilStr = `// 颜色转换函数
+export const Color = Utils.color
+// 生成唯一id
 export const generateId = Utils.helper.generateId
 // 生成uuid
 export const getUuid = Utils.util.uuid

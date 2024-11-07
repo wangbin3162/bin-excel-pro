@@ -7,6 +7,7 @@ import { getDatasetData } from '@/api/modules/dataset.api'
 import { setDatasetList } from '../../ExcelDesign/hooks/useDataset'
 import cellDataConverter from '../processing'
 import { useUniverScripts } from './useUniverScripts'
+// import { getMaxRowColumn } from '@/plugins/univer-excel/util'
 
 const status = {
   excelData: ref({
@@ -83,6 +84,16 @@ export default function useUniverRender(isPreview = false) {
     }
   }
 
+  // 下载
+  function download() {
+    univer.value.downloadExcel()
+  }
+
+  // 关闭
+  function closePage() {
+    window.close()
+  }
+
   // 如果是预览模式，则执行初始化
   if (isPreview) {
     onMounted(async () => {
@@ -108,6 +119,14 @@ export default function useUniverRender(isPreview = false) {
           contextMenu: false,
         },
       )
+
+      // const sheetKey = excelData.value.univerInfo.sheetOrder[0]
+      // const sheet = excelData.value.univerInfo.sheets[sheetKey]
+      // 获取最大行列
+      // const { maxRow, maxColumn } = getMaxRowColumn(sheet.cellData)
+      // sheet.rowCount = maxRow
+      // sheet.columnCount = maxColumn
+
       await univer.value.createSheet(excelData.value.univerInfo)
       univer.value.disableEdit()
 
@@ -133,11 +152,14 @@ export default function useUniverRender(isPreview = false) {
 
   return {
     excelData,
+    rawData,
     dataList,
     initData,
     config,
     dictConfig,
     customScripts,
     containerRef,
+    closePage,
+    download,
   }
 }

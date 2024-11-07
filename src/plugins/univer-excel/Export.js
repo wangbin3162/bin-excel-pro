@@ -1,4 +1,4 @@
-import { getNow } from '@/utils/util'
+import { getNow, Color } from '@/utils/util'
 import Excel from 'exceljs'
 import FileSaver from 'file-saver'
 import { getLetter, getCurrentSheetPlugin, getCellsByRange } from './util'
@@ -90,6 +90,7 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
       // console.log(`cell ========>[${letter}]`, cell)
       if (cell.s) {
         const style = styles[cell.s] || {}
+        console.log(`cell ========>[${letter}]`, cell, style)
 
         const fill = fillConvert(style) //填充颜色
         if (fill) target.fill = fill
@@ -521,15 +522,7 @@ function alignmentConvert(style) {
   return alignment
 }
 
-function colorRGBtoHex(color) {
-  color = color.replace('rgb', '').replace('(', '').replace(')', '')
-  let rgb = color.split(',')
-  let r = parseInt(rgb[0])
-  let g = parseInt(rgb[1])
-  let b = parseInt(rgb[2])
-  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
-}
-
 function color2Hex(color) {
-  return color.startsWith('#') ? color.replace('#', '') : colorRGBtoHex(color).replace('#', '')
+  const c = Color.toHex(color)
+  return c.replace('#', '')
 }

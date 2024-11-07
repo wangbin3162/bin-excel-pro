@@ -146,7 +146,7 @@ export function clearEmptyInCellData(cellData) {
     const newRow = {}
     for (const colKey in row) {
       const cell = row[colKey]
-      if (!isEmptyCell(cell)) {
+      if (!isEmptyCell(cell) || cell.s.length) {
         newRow[colKey] = cell
       }
     }
@@ -157,6 +157,23 @@ export function clearEmptyInCellData(cellData) {
   }
   // console.log('cellData|newCellData ========>', cellData, newCellData)
   return newCellData
+}
+
+/**
+ * 根据cellData获取最大行和列
+ * @param {*} cellData
+ */
+export function getMaxRowColumn(cellData) {
+  let maxRow = 0
+  let maxColumn = 0
+  for (const rowKey in cellData) {
+    const row = cellData[rowKey]
+    maxRow = Math.max(maxRow, Number(rowKey))
+    for (const colKey in row) {
+      maxColumn = Math.max(maxColumn, Number(colKey))
+    }
+  }
+  return { maxRow, maxColumn }
 }
 
 /**

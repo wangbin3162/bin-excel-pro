@@ -1,5 +1,8 @@
 import { Utils, Notice } from 'bin-ui-design'
 
+// 颜色转换函数
+export const Color = Utils.color
+
 // 生成唯一id
 export const generateId = Utils.helper.generateId
 
