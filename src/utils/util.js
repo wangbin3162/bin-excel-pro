@@ -88,7 +88,13 @@ export function throwError(callFun, e, title, log = true) {
   }
 }
 
-// 数组转对象值
+/**
+ * 数组转对象值
+ * @param {*} arr
+ * @param {*} keyCode 默认 key
+ * @param {*} valueCode 默认 value
+ * @returns
+ */
 export function arrToObj(arr = [], keyCode = 'key', valueCode = 'value') {
   const map = new Map()
   if (arr.length === 0) return {}
@@ -139,7 +145,12 @@ export function downloadFile(content, fileName) {
   }
 }
 
-// 判断是否包含属性
+/**
+ * 判断是否包含属性
+ * @param {*} obj
+ * @param {*} key
+ * @returns
+ */
 export function hasKey(obj, key) {
   return Object.keys(obj).includes(key)
 }
@@ -179,7 +190,11 @@ export function compileFlatState(stateTree) {
   return flatTree
 }
 
-// 字符串转为unicode编码后的字符串
+/**
+ * 字符串转为unicode编码后的字符串
+ * @param {*} str
+ * @returns
+ */
 export function strToUnicode(str) {
   const arr = []
   for (let i = 0; i < str.length; i++) {
@@ -188,11 +203,20 @@ export function strToUnicode(str) {
   return arr.join('-')
 }
 
-// unicode转为字符串
+/**
+ * unicode转为字符串
+ * @param {*} str
+ * @returns
+ */
 export function unicodeToStr(str) {
   return String.fromCharCode(...str.split('-'))
 }
 
+/**
+ * 获取当前时间
+ * @param {*} cFormat 默认值 '{y}-{m}-{d} {h}:{i}:{s}'
+ * @returns
+ */
 export function getNow(cFormat = '{y}-{m}-{d} {h}:{i}:{s}') {
   return Utils.util.parseTime(new Date(), cFormat)
 }

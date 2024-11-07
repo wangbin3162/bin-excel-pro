@@ -20,7 +20,7 @@
               style="display: inline-flex; width: auto"
               label=""
               modalTitle="自定义脚本"
-              funcExplain="全局脚本，可以通过提供的脚本进行更灵活的配置和设置"
+              funcExplain="全局脚本，可以通过提供的脚本进行更灵活的配置和设置 <a href='https://univer.ai/zh-CN/guides/sheet/introduction' target='_blank'>[Univer官网]</a>"
             />
           </div>
         </b-form-item>

@@ -7,7 +7,7 @@
         :name="index + ''"
         :title="item.name"
       >
-        <div class="tip">{{ item.desc }}</div>
+        <div class="tip" v-html="item.desc"></div>
         <div class="code">
           <b-ace-editor
             v-if="item.json"

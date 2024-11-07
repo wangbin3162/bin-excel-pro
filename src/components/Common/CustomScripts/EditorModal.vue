@@ -21,7 +21,7 @@
           </p>
           <p class="code">
             <b-ace-editor
-              theme="sqlserver"
+              theme="xcode"
               wrap
               lang="typescript"
               height="450"
@@ -57,9 +57,11 @@
               <b-icon name="file-text"></b-icon>
               说明
             </b-tag>
-            <span class="pl-5" style="color: var(--bin-color-danger-light1)">
-              {{ funcExplain }}
-            </span>
+            <div
+              class="pl-5"
+              style="color: var(--bin-color-danger-light1)"
+              v-html="funcExplain"
+            ></div>
           </template>
         </div>
         <div>
@@ -173,9 +175,9 @@ defineExpose({
     }
   }
 
-  :deep(.ace-sqlserver) {
+  :deep(.bin-editor-next.ace_editor) {
     background: transparent;
-    line-height: 18px;
+    line-height: 1.4;
     .ace_gutter {
       background: transparent;
     }
@@ -193,7 +195,7 @@ defineExpose({
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
     background: #fafafa;
     white-space: pre-wrap;
-    line-height: 1.5715;
+    line-height: 1.4;
   }
   :deep(.bin-collapse-content) {
     padding: 0;

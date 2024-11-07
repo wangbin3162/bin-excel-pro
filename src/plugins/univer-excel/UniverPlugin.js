@@ -113,15 +113,11 @@ export class UniverPlugin {
       univer.registerPlugin(UniverSheetsDataValidationUIPlugin)
     }
 
-    this.univer = univer // 保存实例// 注册插件
-    this.univerAPI = FUniver.newAPI(univer)
+    this.univer = univer // 保存实例
+    this.univerAPI = FUniver.newAPI(univer) // 注册插件
   }
 
-  getInstance() {
-    return this.univer
-  }
-
-  // 移除
+  // 销毁
   destory() {
     this.destoryWorkbook()
     this.univer = null
@@ -188,7 +184,7 @@ export class UniverPlugin {
     return cells
   }
 
-  // 根据letter获取所有cells
+  // 根据letter获取所有单元格
   getCellsByLetter(letter) {
     const range = this.getRangeByLetter(letter)
     const cells = []
@@ -202,13 +198,13 @@ export class UniverPlugin {
     return cells
   }
 
-  // 获取单元格
+  // 获取一个单元格
   getCell(startRow = 0, startColumn = 0) {
     const cells = this.getCellsByRange(startRow, startColumn, 1, 1)
     return cells[0]
   }
 
-  // 根据letter获取单元格
+  // 根据letter获取一个单元格
   getCellByLetter(letter) {
     const cells = this.getCellsByLetter(letter)
     return cells[0]
@@ -226,7 +222,7 @@ export class UniverPlugin {
     range.setValue(cellValue)
   }
 
-  // 设置单元格的值
+  // 根据letter设置单元格的值
   setCellByLetter(letter, cellValue) {
     const range = this.getRangeByLetter(letter)
     range.setValue(cellValue)
