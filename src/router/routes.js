@@ -82,6 +82,12 @@ export const routesOutLayout = [
     name: 'ExcelPreview',
     component: () => import('@/views/pages/ExcelPreview/index.vue'),
   },
+  // 报表填报
+  {
+    path: '/excel-fill',
+    name: 'ExcelFill',
+    component: () => import('@/views/pages/ExcelFill/index.vue'),
+  },
 ]
 
 /**

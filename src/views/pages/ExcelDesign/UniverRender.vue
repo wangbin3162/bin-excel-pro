@@ -167,9 +167,10 @@ async function saveSheetData() {
 // 预览
 async function handlePreview() {
   await saveSheetData()
+  const renderType = excelData.value.config.type
 
   let routeData = router.resolve({
-    path: '/excel-preview',
+    path: renderType === 'render' ? '/excel-preview' : '/excel-fill',
     query: { id: route.query.id },
   })
   window.open(routeData.href, '_blank')

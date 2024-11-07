@@ -98,18 +98,8 @@ export default function useUniverRender(isPreview = false) {
         rawDataset,
         rawConfig,
       )
-      univer.value = UniverPlugin.init(
-        containerRef.value,
-        {},
-        {
-          header: false,
-          toolbar: false,
-          footer: false,
-          contextMenu: false,
-        },
-      )
+      univer.value = UniverPlugin.init(containerRef.value)
       await univer.value.createSheet(excelData.value.univerInfo)
-      univer.value.disableEdit()
 
       // 事件监听
       univer.value.univerAPI.getHooks().onRendered(() => {

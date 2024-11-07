@@ -8,12 +8,12 @@ export function useScriptsParams() {
  *  Univer实例化对象
  */
 export class UniverPlugin {
-  static init(container, cfg = {}) {
-    return new UniverPlugin(container, cfg)
+  static init(container, cfg = {}, ui = {}) {
+    return new UniverPlugin(container, cfg, ui)
   }
 
   // 注册初始化，并绑定容器
-  constructor(container, cfg = {}) {
+  constructor(container, cfg = {}, ui = {}) {
     // ... 初始化内容
     this.univer = univer // 保存实例
     this.univerAPI = FUniver.newAPI(univer) // 注册插件
@@ -30,6 +30,9 @@ export class UniverPlugin {
    * @param {*} data 一个IWorkbookData 类型的数据对象
    */
   createSheet(data = {}) {}
+
+  // 禁用工作簿编辑
+  disableEdit() {}
 
   // 获取工作簿数据
   getWorkBook() {}

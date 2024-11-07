@@ -1,11 +1,26 @@
 import './custom-theme.css'
-import { LocaleType, Univer, UniverInstanceType } from '@univerjs/core'
+import { LocaleType, Univer, UniverInstanceType, LogLevel } from '@univerjs/core'
 import { defaultTheme } from '@univerjs/design'
 import { UniverRenderEnginePlugin } from '@univerjs/engine-render'
 import { UniverUIPlugin } from '@univerjs/ui'
 import { UniverDocsPlugin } from '@univerjs/docs'
 import { UniverDocsUIPlugin } from '@univerjs/docs-ui'
-import { UniverSheetsPlugin } from '@univerjs/sheets'
+import {
+  UniverSheetsPlugin,
+  // 工作簿权限
+  WorkbookEditablePermission,
+  WorkbookCreateSheetPermission,
+  // 工作表权限
+  WorksheetSetRowStylePermission,
+  WorksheetSetColumnStylePermission,
+  WorksheetSetCellValuePermission,
+  WorksheetSetCellStylePermission,
+  WorksheetPivotTablePermission,
+  WorksheetInsertRowPermission,
+  WorksheetInsertColumnPermission,
+  WorksheetDeleteRowPermission,
+  WorksheetDeleteColumnPermission,
+} from '@univerjs/sheets'
 import { UniverSheetsUIPlugin } from '@univerjs/sheets-ui'
 // sheet feature plugins
 import { UniverFormulaEnginePlugin } from '@univerjs/engine-formula'
@@ -33,6 +48,7 @@ import { UniverSheetsDrawingUIPlugin } from '@univerjs/sheets-drawing-ui'
 import { UniverDataValidationPlugin } from '@univerjs/data-validation'
 import { UniverSheetsDataValidationPlugin } from '@univerjs/sheets-data-validation'
 import { UniverSheetsDataValidationUIPlugin } from '@univerjs/sheets-data-validation-ui'
+
 import { exportExcel } from './Export'
 
 // 默认插件配置
@@ -49,18 +65,25 @@ const defaultCfg = {
  *  Univer实例化对象
  */
 export class UniverPlugin {
-  static init(container, cfg = {}) {
-    return new UniverPlugin(container, cfg)
+  static init(container, cfg = {}, ui = {}) {
+    return new UniverPlugin(container, cfg, ui)
   }
 
   // 注册初始化，并绑定容器
-  constructor(container, cfg = {}) {
+  constructor(container, cfg = {}, ui = {}) {
     if (!container) {
       console.error('container is required!')
       return
     }
 
     cfg = { ...defaultCfg, ...cfg }
+    ui = {
+      header: true,
+      toolbar: true,
+      footer: true,
+      contextMenu: true,
+      ...ui,
+    }
 
     const univer = new Univer({
       theme: defaultTheme,
@@ -68,10 +91,15 @@ export class UniverPlugin {
       locales: {
         [LocaleType.ZH_CN]: zhCN,
       },
+      logLevel: LogLevel.SILENT,
     })
     // core plugins
     univer.registerPlugin(UniverRenderEnginePlugin)
-    univer.registerPlugin(UniverUIPlugin, { container })
+    // ui plugins
+    univer.registerPlugin(UniverUIPlugin, {
+      container,
+      ...ui,
+    })
     univer.registerPlugin(UniverDocsPlugin)
     univer.registerPlugin(UniverDocsUIPlugin)
     univer.registerPlugin(UniverSheetsPlugin)
@@ -139,7 +167,50 @@ export class UniverPlugin {
    */
   createSheet(data = {}) {
     this.workbook = this.univer.createUnit(UniverInstanceType.UNIVER_SHEET, data)
+
+    // 默认只有一个工作表
+    const permission = this.univerAPI.getPermission()
+    const activeWorkbook = this.univerAPI.getActiveWorkbook()
+    const unitId = activeWorkbook && activeWorkbook.getId()
+
+    if (unitId) {
+      // 禁用工作簿编辑
+      permission.setWorkbookPermissionPoint(unitId, WorkbookCreateSheetPermission, false)
+    }
+
     return this.workbook
+  }
+
+  // 禁用工作簿编辑
+  disableEdit() {
+    const permission = this.univerAPI.getPermission()
+    // 获取unitId和sheetId
+    const activeWorkbook = this.univerAPI.getActiveWorkbook()
+    const unitId = activeWorkbook && activeWorkbook.getId()
+    const sheetId = activeWorkbook.getActiveSheet().getSheetId()
+    console.log('disableEdit', unitId, sheetId)
+    // 禁用弹窗
+    permission.setPermissionDialogVisible(false)
+    if (unitId) {
+      // 禁用工作簿编辑
+      permission.setWorkbookPermissionPoint(unitId, WorkbookEditablePermission, false)
+      if (sheetId) {
+        const disabledList = [
+          WorksheetSetRowStylePermission,
+          WorksheetSetColumnStylePermission,
+          WorksheetSetCellValuePermission,
+          WorksheetSetCellStylePermission,
+          WorksheetPivotTablePermission,
+          WorksheetInsertRowPermission,
+          WorksheetInsertColumnPermission,
+          WorksheetDeleteRowPermission,
+          WorksheetDeleteColumnPermission,
+        ]
+        disabledList.forEach(item => {
+          permission.setWorksheetPermissionPoint(unitId, sheetId, item, false)
+        })
+      }
+    }
   }
 
   // 获取工作簿数据
@@ -231,7 +302,7 @@ export class UniverPlugin {
   // 获取所有工作表数据
   getAllSheets() {
     const sheets = this.getWorkBook().sheets
-    console.log('AllSheets ========>', sheets)
+    // console.log('AllSheets ========>', sheets)
     return sheets
   }
 
