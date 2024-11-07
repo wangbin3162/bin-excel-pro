@@ -88,20 +88,27 @@ const setStyleAndValue = (cellData, worksheet, styles) => {
       let letter = getLetter(rowKey, cellKey)
       let target = worksheet.getCell(letter)
       // console.log(`cell ========>[${letter}]`, cell)
+      // 设置值
+      let value = setValue(cell)
+      target.value = value
+
       if (cell.s) {
         const style = styles[cell.s] || {}
-        console.log(`cell ========>[${letter}]`, cell, style)
-
+        // console.log(`cell ========>[${letter}]`, cell, style)
         const fill = fillConvert(style) //填充颜色
         if (fill) target.fill = fill
         const font = fontConvert(style) //字体
         if (font) target.font = font
         const alignment = alignmentConvert(style)
         if (alignment) target.alignment = alignment
+
+        // 如果有设置小数位数
+        if (style && style.n && style.n.pattern) {
+          // const { pattern } = style.n
+          target.numFmt = style.n.pattern
+          // console.log('style ========>', style)
+        }
       }
-      // 设置值
-      let value = setValue(cell)
-      target.value = value
     })
   })
 }
@@ -413,6 +420,7 @@ function borderConvert(bd) {
 function setValue(cell) {
   // 原始值v，类型t，公式f
   const { v, t, f, p } = cell
+
   let value = ''
   if (f) {
     value = { formula: f, result: v }
@@ -439,6 +447,7 @@ function setValue(cell) {
     // 根据类型处理value值
     if (cell.v !== undefined && cell.v !== '') {
       let val = t === 2 ? +v : v
+
       if (isNaN(v)) val = v
       value = val
     }
