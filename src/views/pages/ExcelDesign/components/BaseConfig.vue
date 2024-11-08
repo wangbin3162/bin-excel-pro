@@ -54,10 +54,32 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
-import { useUniverStatus } from '../hooks/useUniver'
+import { ref, watch, nextTick, computed } from 'vue'
+import { getLetter } from '@/plugins/univer-excel/util'
+import useUniverStore from '../hooks/useUniverStore'
 
-const { univer, currentRange, currentPosition, currentLetter, dictConfig } = useUniverStatus()
+const props = defineProps({
+  currentRange: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+
+const currentPosition = computed({
+  get: () => {
+    const { startRow, startColumn } = props.currentRange
+    return `${startRow},${startColumn}`
+  },
+})
+
+const currentLetter = computed({
+  get: () => {
+    const { startRow, startColumn } = props.currentRange
+    return getLetter(startRow, startColumn)
+  },
+})
+
+const { uniPlugin, dictConfig } = useUniverStore()
 
 const currentCell = ref({}) // 当前单元格cell
 
@@ -66,9 +88,9 @@ const useMapping = ref('') // 使用映射转换
 
 // 选区变化事件
 function rangeChange({ startRow, startColumn }) {
-  if (!univer.value) return
+  if (!uniPlugin.value) return
   // console.log(startRow, startColumn)
-  const cellData = univer.value.getCell(startRow, startColumn)
+  const cellData = uniPlugin.value.getCell(startRow, startColumn)
   currentCell.value = cellData.cell
   // console.log('cellData ========>', cellData)
   isDymamicMerge.value = currentCell.value.custom?.isDymamicMerge || false
@@ -77,23 +99,23 @@ function rangeChange({ startRow, startColumn }) {
 
 // 值改变 v
 async function changeValue() {
-  const { startRow, startColumn } = currentRange.value
-  univer.value.setCell(startRow, startColumn, currentCell.value)
+  const { startRow, startColumn } = props.currentRange
+  uniPlugin.value.setCell(startRow, startColumn, currentCell.value)
   await nextTick()
   rangeChange({ startRow, startColumn })
 }
 
 // 值清空 v
 function clearCell() {
-  const { startRow, startColumn } = currentRange.value
-  univer.value.setCell(startRow, startColumn, '')
+  const { startRow, startColumn } = props.currentRange
+  uniPlugin.value.setCell(startRow, startColumn, '')
   currentCell.value = {}
 }
 
 // 动态合并
 function changeMerge(val) {
-  const { startRow, startColumn } = currentRange.value
-  univer.value.setCell(startRow, startColumn, {
+  const { startRow, startColumn } = props.currentRange
+  uniPlugin.value.setCell(startRow, startColumn, {
     ...currentCell.value,
     custom: { isDymamicMerge: val },
   })
@@ -101,8 +123,8 @@ function changeMerge(val) {
 
 // 映射转换
 function changeMapping(val) {
-  const { startRow, startColumn } = currentRange.value
-  univer.value.setCell(startRow, startColumn, {
+  const { startRow, startColumn } = props.currentRange
+  uniPlugin.value.setCell(startRow, startColumn, {
     ...currentCell.value,
     custom: { useMapping: val },
   })
@@ -110,7 +132,7 @@ function changeMapping(val) {
 
 // 监听选区变化，如果有变化则获取值
 watch(
-  () => currentRange.value,
+  () => props.currentRange,
   val => rangeChange(val),
   { deep: true },
 )

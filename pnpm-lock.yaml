@@ -119,6 +119,9 @@ importers:
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
+      luckyexcel:
+        specifier: ^1.0.1
+        version: 1.0.1
       pinia:
         specifier: ^2.2.4
         version: 2.2.4(vue@3.5.12)
@@ -1753,6 +1756,9 @@ packages:
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
+
+  luckyexcel@1.0.1:
+    resolution: {integrity: sha512-hvbJmCXNp/vST/huA6sieDn32Ib8bd80L9aIu5ZGxniJvZle7VlpHZrl6weLGaEnX99+t7cPAoYGqrqbfZp/AQ==}
 
   magic-string@0.30.12:
     resolution: {integrity: sha512-Ea8I3sQMVXr8JhN4z+H/d8zwo+tYDgHE9+5G4Wnrwhs0gaK9fXTKx0Tw5Xwsd/bCPTTZNRAdpyzvoeORe9LYpw==}
@@ -4628,6 +4634,10 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
+
+  luckyexcel@1.0.1:
+    dependencies:
+      jszip: 3.10.1
 
   magic-string@0.30.12:
     dependencies:

@@ -52,11 +52,9 @@ async function handleDownload() {
     display: flex;
     width: 100%;
     height: calc(100% - 50px);
-    /* padding: 24px; */
     .sheet-excel {
       width: 100%;
       height: 100%;
-      /* border: 1px solid #f0f0f0; */
     }
     .mask-toolbar {
       position: absolute;

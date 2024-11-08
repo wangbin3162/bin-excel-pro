@@ -11,14 +11,14 @@ import { watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getReportDetail } from '@/api/modules/excel.api'
 import UniverRender from './UniverRender.vue'
-import { useUniverStatus } from './hooks/useUniver'
+import useUniverStore from './hooks/useUniverStore'
 
 defineOptions({ name: 'ExcelDesign' })
 
 const route = useRoute()
 const render = ref(false)
 
-const { initData } = useUniverStatus()
+const { initData } = useUniverStore()
 
 watch(
   () => route.path,

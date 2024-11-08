@@ -35,7 +35,7 @@ export class UniverPlugin {
   disableEdit() {}
 
   // 获取工作簿数据
-  getWorkBook() {}
+  getWorkBookData() {}
 
   // 获取选区
   getRange(startRow, startColumn, width, height) {}

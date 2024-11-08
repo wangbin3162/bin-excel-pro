@@ -32,11 +32,10 @@
 </template>
 
 <script setup>
-import { useUniverStatus } from '../hooks/useUniver'
+import useUniverStore from '../hooks/useUniverStore'
 import { useScriptsParams } from '../hooks/useScriptsParams'
 
-const { customScripts } = useUniverStatus()
-
+const { customScripts } = useUniverStore()
 const { paramsDesc, exampleDesc } = useScriptsParams()
 </script>
 

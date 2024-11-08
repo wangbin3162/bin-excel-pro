@@ -29,9 +29,9 @@
 <script setup>
 import DictConfig from './DictConfig.vue'
 import ScriptConfig from './ScriptConfig.vue'
-import { useUniverStatus } from '../hooks/useUniver'
+import useUniverStore from '../hooks/useUniverStore'
 
-const { title, config } = useUniverStatus()
+const { title, config } = useUniverStore()
 </script>
 
 <style scoped>

@@ -64,9 +64,9 @@
 
 <script setup>
 import { toJson } from '@/utils/util'
-import { useUniverStatus } from '../hooks/useUniver'
+import useUniverStore from '../hooks/useUniverStore'
 
-const { excelData } = useUniverStatus()
+const { excelData } = useUniverStore()
 
 function fieldDrag(event, dataset, field) {
   // console.log('item ========>', field)

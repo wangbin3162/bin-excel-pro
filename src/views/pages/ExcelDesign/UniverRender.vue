@@ -44,8 +44,15 @@
 
     <div class="sheet-body">
       <DatasetConfig />
-
-      <div id="SheetContainer" class="sheet-excel" ref="containerRef" />
+      <div class="sheet-excel">
+        <UniverSheet
+          ref="univerSheetRef"
+          v-if="isShow"
+          :data="univerInfo"
+          :onSelectionChange="selectionChange"
+          :onCellDrop="sellDrop"
+        />
+      </div>
 
       <div class="right-config">
         <div class="title-top">
@@ -60,7 +67,7 @@
           </div>
           <div class="config-content">
             <b-scrollbar>
-              <BaseConfig v-if="activeTab === 'base'" />
+              <BaseConfig v-if="activeTab === 'base'" :currentRange="currentRange" />
               <GlobalConfig v-if="activeTab === 'global'" />
             </b-scrollbar>
           </div>
@@ -71,47 +78,71 @@
 </template>
 
 <script setup>
-import { toRaw } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { toRaw, ref } from 'vue'
 import { Message } from 'bin-ui-design'
-import * as api from '@/api/modules/excel.api'
-import { sendMsg } from '@/utils/cross-tab-msg'
-import { deepCopy, toJson } from '@/utils/util'
-import { clearEmptyInCellData } from '@/plugins/univer-excel/util'
-import { useUniverDesign, debugStatus } from './hooks/useUniver'
+import { useRouter, useRoute } from 'vue-router'
 import DatasetConfig from './components/DatasetConfig.vue'
 import BaseConfig from './components/BaseConfig.vue'
 import GlobalConfig from './components/GlobalConfig.vue'
 
+import UniverSheet from '@/plugins/univer-excel/UniverSheet.vue'
+import { getLetter } from '@/plugins/univer-excel/util'
+
+import * as api from '@/api/modules/excel.api'
+import { sendMsg } from '@/utils/cross-tab-msg'
+import { deepCopy, toJson, fromJson } from '@/utils/util'
+
+import useUniverStore from './hooks/useUniverStore'
+
+const {
+  title,
+  univerSheetRef,
+  uniPlugin,
+  excelData,
+  isShow,
+  univerInfo,
+  closePage,
+  download,
+  getUpdateData,
+  debugStatus,
+} = useUniverStore()
+
 const router = useRouter()
 const route = useRoute()
 
-const {
-  excelData,
-  activeTab,
-  containerRef,
-  title,
-  btnLoading,
-  closePage,
-  download,
-  importExcel,
-  setUniverInfo,
-} = useUniverDesign()
+const currentRange = ref({})
+const btnLoading = ref(false)
+const activeTab = ref('base') // base, global
+
+// 选区点击改变事件
+function selectionChange(selection) {
+  if (selection.length > 0) currentRange.value = selection[0]
+  activeTab.value = 'base'
+}
+
+// 单元格放置事件
+function sellDrop({ dataTransfer, location }) {
+  const drop = dataTransfer.getData('field')
+  if (!drop) return
+  const { dataset, field } = fromJson(drop, {})
+  // 组装数据，根据是否是列表型 列表组装为#{}，非列表组装为${}
+  const value = dataset.isList
+    ? `#{${dataset.code}.${field.fieldName}}`
+    : '$' + `{${dataset.code}.${field.fieldName}}`
+  // console.log('dropData ========>', dataset, field, value)
+  // 设置单元格的值
+  const { col, row } = location
+  const letter = getLetter(row, col)
+  console.log(`location ========>[${letter}]`, location)
+  const sheet = uniPlugin.value.univerAPI.getActiveWorkbook().getActiveSheet()
+  const range = sheet.getRange(letter)
+  range.setValue(value)
+  range.setWrapStrategy(2)
+}
 
 // 处理保存数据
 function getSaveData() {
-  setUniverInfo()
-  console.log('excelData.value ========>', excelData.value)
-
-  // 处理univerInfo数据，移除多个sheet，只保留第一个sheet的数据，并且对第一个sheet进行去空处理
-  const univerInfo = deepCopy(excelData.value.univerInfo)
-  univerInfo.sheetOrder.forEach(key => {
-    // 获取每一个sheet
-    const sheet = univerInfo.sheets[key]
-    sheet.cellData = clearEmptyInCellData(sheet.cellData)
-  })
-  // 设置回原始univerInfo
-  excelData.value.univerInfo = univerInfo
+  getUpdateData()
   // 组装数据
   const data = {
     ...toRaw(excelData.value),
@@ -127,6 +158,39 @@ function getSaveData() {
 async function handleDownload() {
   await saveSheetData()
   download()
+}
+
+// 导入excel
+function importExcel() {
+  // let input = document.createElement('input')
+  // input.type = 'file'
+  // input.onchange = e => {
+  //   const files = e.target.files
+  //   if (!files || files.length === 0) {
+  //     Message.error('没有选择文件!')
+  //     return
+  //   }
+  //   let file = files[0]
+  //   const name = file.name
+  //   let suffixArr = name.split('.'),
+  //     suffix = suffixArr[suffixArr.length - 1]
+  //   if (suffix !== 'xlsx') {
+  //     Message.error('当前仅支持xlsx后缀的文件导入!')
+  //     return
+  //   }
+  //   importExcelToUninver(file).then(res => {
+  //     // console.log(res)
+  //     if (cellDropDispossable) cellDropDispossable.dispose()
+  //     if (selectDisposable) selectDisposable.dispose()
+  //     univer.value.destoryWorkbook()
+  //     univer.value.createSheet(res)
+  //     // 监听放置功能
+  //     cellDropDispossable = univer.value.univerAPI.getSheetHooks().onCellDrop(sellDrop)
+  //     const activeWorkbook = univer.value.univerAPI.getActiveWorkbook()
+  //     selectDisposable = activeWorkbook.onSelectionChange(handleSelectionChange)
+  //   })
+  // }
+  // input.click()
 }
 
 // 调用保存方法
@@ -168,7 +232,6 @@ async function saveSheetData() {
 async function handlePreview() {
   await saveSheetData()
   const renderType = excelData.value.config.type
-
   let routeData = router.resolve({
     path: renderType === 'render' ? '/excel-preview' : '/excel-fill',
     query: { id: route.query.id },

@@ -51,11 +51,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useUniverStatus } from '../hooks/useUniver'
+import useUniverStore from '../hooks/useUniverStore'
 import { newDict } from '../hooks/useConfig'
 import DictMapping from './DictMapping.vue'
 
-const { dictConfig } = useUniverStatus()
+const { dictConfig } = useUniverStore()
 
 const columns = [
   { title: '字典名称', key: 'dictName' },

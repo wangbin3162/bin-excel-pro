@@ -147,7 +147,7 @@ export class UniverPlugin {
 
   // 销毁
   destory() {
-    this.destoryWorkbook()
+    this.univer?.dispose()
     this.univer = null
     this.workbook = null
   }
@@ -167,17 +167,6 @@ export class UniverPlugin {
    */
   createSheet(data = {}) {
     this.workbook = this.univer.createUnit(UniverInstanceType.UNIVER_SHEET, data)
-
-    // 默认只有一个工作表
-    const permission = this.univerAPI.getPermission()
-    const activeWorkbook = this.univerAPI.getActiveWorkbook()
-    const unitId = activeWorkbook && activeWorkbook.getId()
-
-    if (unitId) {
-      // 禁用工作簿编辑
-      permission.setWorkbookPermissionPoint(unitId, WorkbookCreateSheetPermission, false)
-    }
-
     return this.workbook
   }
 
@@ -214,10 +203,10 @@ export class UniverPlugin {
   }
 
   // 获取工作簿数据
-  getWorkBook() {
+  getWorkBookData() {
     const activeWorkbook = this.univerAPI.getActiveWorkbook()
     const saveData = activeWorkbook.save()
-    console.log('ActiveWorkBook ========>', saveData)
+    console.log('getWorkBookData ========>', saveData)
     return saveData
   }
 
@@ -301,14 +290,14 @@ export class UniverPlugin {
 
   // 获取所有工作表数据
   getAllSheets() {
-    const sheets = this.getWorkBook().sheets
+    const sheets = this.getWorkBookData().sheets
     // console.log('AllSheets ========>', sheets)
     return sheets
   }
 
   // 下载Excel
   downloadExcel() {
-    const workbook = this.getWorkBook()
+    const workbook = this.getWorkBookData()
     exportExcel(workbook)
   }
 }
