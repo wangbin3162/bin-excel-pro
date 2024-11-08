@@ -9,7 +9,6 @@ import {
   UniverSheetsPlugin,
   // 工作簿权限
   WorkbookEditablePermission,
-  WorkbookCreateSheetPermission,
   // 工作表权限
   WorksheetSetRowStylePermission,
   WorksheetSetColumnStylePermission,

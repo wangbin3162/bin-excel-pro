@@ -10,14 +10,15 @@
 import { watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getReportDetail } from '@/api/modules/excel.api'
+import { getDatasetData } from '@/api/modules/dataset.api'
+import useUniverStore from '@/views/pages/ExcelDesign/hooks/useUniverStore'
 import UniverRender from './UniverRender.vue'
-import useUniverRender from './hooks/useUniverRender'
 
 defineOptions({ name: 'ExcelPreview' })
 
 const route = useRoute()
 const render = ref(false)
-const { initData } = useUniverRender()
+const { initData, dataList, excelData } = useUniverStore()
 
 watch(
   () => route.path,
@@ -28,9 +29,14 @@ watch(
       // 如果是有id表示为修改，无id则获取创建对象来进行设置
       const detail = await getReportDetail(id)
       document.title = `[预览] ${detail.name}`
-      await initData(detail)
+      await initData(detail) // 初始化数据
+      try {
+        // 根据数据集获取数据集信息
+        dataList.value = await getDatasetData(excelData.value.datasetInfo.list)
+      } catch (error) {
+        console.log(error)
+      }
     }
-
     render.value = true
   },
   { immediate: true },

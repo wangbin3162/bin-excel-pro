@@ -90,7 +90,7 @@ import { getLetter } from '@/plugins/univer-excel/util'
 
 import * as api from '@/api/modules/excel.api'
 import { sendMsg } from '@/utils/cross-tab-msg'
-import { deepCopy, toJson, fromJson } from '@/utils/util'
+import { toJson, fromJson } from '@/utils/util'
 
 import useUniverStore from './hooks/useUniverStore'
 

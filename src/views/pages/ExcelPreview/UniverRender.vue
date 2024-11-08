@@ -2,7 +2,7 @@
   <div class="sheet-container">
     <div class="sheet-header">
       <div class="left">
-        <h3>{{ rawData.name }}</h3>
+        <h3>{{ excelData.name }}</h3>
       </div>
       <div class="right">
         <b-space>
@@ -15,17 +15,74 @@
       </div>
     </div>
     <div class="sheet-body">
-      <!-- <div class="mask-toolbar"></div>
-      <div class="mask-sidebar"></div> -->
-      <div id="SheetContainer" class="sheet-excel" ref="containerRef" />
+      <div class="sheet-excel">
+        <UniverSheet
+          ref="univerSheetRef"
+          v-if="isShow"
+          :data="univerInfo"
+          :ui-config="{
+            header: false,
+            toolbar: false,
+            footer: false,
+            contextMenu: false,
+          }"
+          @onRendered="onRendered"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import useUniverRender from './hooks/useUniverRender'
+import { toRaw } from 'vue'
+import { deepCopy, fromJson } from '@/utils/util'
+import UniverSheet from '@/plugins/univer-excel/UniverSheet.vue'
+import useUniverStore from '@/views/pages/ExcelDesign/hooks/useUniverStore'
+import cellDataConverter from './processing'
+import { useUniverScripts } from './hooks/useUniverScripts'
 
-const { containerRef, rawData, download, closePage } = useUniverRender(true)
+const {
+  excelData,
+  rawData,
+  dataList,
+  univerSheetRef,
+  uniPlugin,
+  isShow,
+  univerInfo,
+  download,
+  closePage,
+} = useUniverStore(true)
+
+let rawConfig = null
+let rawDataset = null
+let rawDataList = null
+
+function initData() {
+  // 缓存4个原始数据
+  const rawUniverInfo = deepCopy(toRaw(excelData.value.univerInfo))
+  rawConfig = deepCopy(toRaw(excelData.value.config))
+  rawDataList = deepCopy(toRaw(dataList.value))
+  rawDataset = deepCopy(toRaw(excelData.value.datasetInfo.list))
+  // 处理univer数据
+  excelData.value.univerInfo = cellDataConverter(rawUniverInfo, rawDataList, rawDataset, rawConfig)
+}
+
+initData()
+
+// 渲染完成
+function onRendered() {
+  const configData = {
+    univerInfo: fromJson(rawData.value.univerInfo, {}),
+    dataset: rawDataset,
+    config: rawConfig,
+  }
+  const data = {
+    univerInfo: toRaw(excelData.value.univerInfo),
+    dataList: rawDataList,
+  }
+  console.log('onRendered ========>', configData, data)
+  useUniverScripts(toRaw(uniPlugin.value), configData, data)
+}
 
 // 下载
 async function handleDownload() {
