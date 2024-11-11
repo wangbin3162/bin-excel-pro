@@ -100,6 +100,7 @@ export default function useUniverStore() {
 
   // debug
   function debugStatus() {
+    getUpdateData()
     console.log('-------------------------------------debug--------------------------------------')
     const { excelData } = status
     const { datasetInfo, univerInfo, config } = excelData.value

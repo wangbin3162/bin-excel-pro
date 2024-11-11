@@ -47,7 +47,7 @@
       <div class="sheet-excel">
         <UniverSheet
           ref="univerSheetRef"
-          v-if="isShow"
+          v-if="isShow && univerInfo !== null"
           :data="univerInfo"
           :onSelectionChange="selectionChange"
           :onCellDrop="sellDrop"
@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-import { toRaw, ref } from 'vue'
+import { toRaw, ref, nextTick } from 'vue'
 import { Message } from 'bin-ui-design'
 import { useRouter, useRoute } from 'vue-router'
 import DatasetConfig from './components/DatasetConfig.vue'
@@ -93,6 +93,7 @@ import { sendMsg } from '@/utils/cross-tab-msg'
 import { toJson, fromJson } from '@/utils/util'
 
 import useUniverStore from './hooks/useUniverStore'
+import { importExcelToUninver } from '@/plugins/univer-excel/luckToUniver'
 
 const {
   title,
@@ -116,12 +117,15 @@ const activeTab = ref('base') // base, global
 
 // 选区点击改变事件
 function selectionChange(selection) {
+  if (!selection) return
   if (selection.length > 0) currentRange.value = selection[0]
   activeTab.value = 'base'
 }
 
 // 单元格放置事件
-function sellDrop({ dataTransfer, location }) {
+function sellDrop(cell) {
+  if (!cell) return
+  const { dataTransfer, location } = cell
   const drop = dataTransfer.getData('field')
   if (!drop) return
   const { dataset, field } = fromJson(drop, {})
@@ -161,36 +165,42 @@ async function handleDownload() {
 }
 
 // 导入excel
-function importExcel() {
-  // let input = document.createElement('input')
-  // input.type = 'file'
-  // input.onchange = e => {
-  //   const files = e.target.files
-  //   if (!files || files.length === 0) {
-  //     Message.error('没有选择文件!')
-  //     return
-  //   }
-  //   let file = files[0]
-  //   const name = file.name
-  //   let suffixArr = name.split('.'),
-  //     suffix = suffixArr[suffixArr.length - 1]
-  //   if (suffix !== 'xlsx') {
-  //     Message.error('当前仅支持xlsx后缀的文件导入!')
-  //     return
-  //   }
-  //   importExcelToUninver(file).then(res => {
-  //     // console.log(res)
-  //     if (cellDropDispossable) cellDropDispossable.dispose()
-  //     if (selectDisposable) selectDisposable.dispose()
-  //     univer.value.destoryWorkbook()
-  //     univer.value.createSheet(res)
-  //     // 监听放置功能
-  //     cellDropDispossable = univer.value.univerAPI.getSheetHooks().onCellDrop(sellDrop)
-  //     const activeWorkbook = univer.value.univerAPI.getActiveWorkbook()
-  //     selectDisposable = activeWorkbook.onSelectionChange(handleSelectionChange)
-  //   })
-  // }
-  // input.click()
+async function importExcel() {
+  const file = await inputLoad()
+  if (!file) return
+
+  // isShow.value = false
+  const univerData = await importExcelToUninver(file)
+  console.log('univerData ========>', univerData)
+  // univerInfo.value = univerData
+  // await nextTick()
+  // isShow.value = true
+}
+
+// 创建载入
+function inputLoad() {
+  return new Promise(resolve => {
+    let input = document.createElement('input')
+    input.type = 'file'
+    input.onchange = e => {
+      const files = e.target.files
+      if (!files || files.length === 0) {
+        Message.error('没有选择文件!')
+        resolve(null)
+      }
+      let file = files[0]
+      const name = file.name
+      let suffixArr = name.split('.'),
+        suffix = suffixArr[suffixArr.length - 1]
+      if (suffix !== 'xlsx') {
+        Message.error('当前仅支持xlsx后缀的文件导入!')
+        resolve(null)
+      }
+
+      resolve(file)
+    }
+    input.click()
+  })
 }
 
 // 调用保存方法

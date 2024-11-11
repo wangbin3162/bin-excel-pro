@@ -146,9 +146,10 @@ export class UniverPlugin {
 
   // 销毁
   destory() {
-    this.univer?.dispose()
+    this.destoryWorkbook()
     this.univer = null
     this.workbook = null
+    this.univerAPI = null
   }
 
   // 销毁工作簿

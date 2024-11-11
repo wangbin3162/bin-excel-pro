@@ -146,7 +146,7 @@ export function clearEmptyInCellData(cellData) {
     const newRow = {}
     for (const colKey in row) {
       const cell = row[colKey]
-      if (!isEmptyCell(cell) || cell.s.length) {
+      if (!isEmptyCell(cell) || (cell && cell.s)) {
         newRow[colKey] = cell
       }
     }

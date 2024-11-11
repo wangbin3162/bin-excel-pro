@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, toRaw, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { UniverPlugin } from './UniverPlugin'
 
 const emit = defineEmits(['onRendered'])
@@ -50,8 +50,9 @@ const containerRef = ref(null)
 const univerPlugin = ref(null)
 
 // 监听事件列表回执
-const eventsDisposables = []
-const cellEventsDisposables = []
+let eventsDisposables = []
+let cellEventsDisposables = []
+let renderDisposable = null
 
 onMounted(() => {
   init()
@@ -88,7 +89,7 @@ function init() {
   }
 
   // 渲染事件监听
-  univerAPI.getHooks().onRendered(() => {
+  renderDisposable = univerAPI.getHooks().onRendered(() => {
     emit('onRendered')
   })
 }
@@ -101,9 +102,14 @@ const getData = () => {
 }
 
 onBeforeUnmount(() => {
-  univerPlugin.value?.destory()
-  univerPlugin.value = null
+  renderDisposable?.dispose()
+  renderDisposable = null
   eventsDisposables.forEach(disp => disp.dispose())
+  eventsDisposables = []
+  cellEventsDisposables.forEach(disp => disp.dispose())
+  cellEventsDisposables = []
+  // univerPlugin.value?.destory()
+  univerPlugin.value = null
 })
 
 defineExpose({
