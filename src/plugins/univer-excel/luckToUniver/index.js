@@ -2,6 +2,8 @@ import LuckyExcel from 'luckyexcel'
 import { LocaleType } from '@univerjs/core'
 import { DATA_VALIDATION_PLUGIN_NAME } from '@univerjs/sheets-data-validation'
 import { worksheetProperty } from './worksheet-property'
+import { worksheetConfig } from './worksheet-config'
+import { cellData } from './cell'
 
 // 导入excel
 export async function importExcelToUninver(file) {
@@ -24,7 +26,7 @@ export async function importExcelToUninver(file) {
 // 根据导入的sheets生成对应的表格workbookData
 function luckyToUniver(luckyJson) {
   const { info, sheets } = luckyJson
-  console.log('--------------------------------------------')
+  console.log('-------------luckyToUniver------------------')
   console.log('info ========>', info)
   console.log('sheets ========>', sheets)
   console.log('--------------------------------------------')
@@ -60,7 +62,7 @@ function luckyToUniver(luckyJson) {
     workbookData.sheets = {}
     // 遍历导入的sheets
     for (let sheet of sheets) {
-      console.log('sheet ========>', sheet)
+      // console.log('sheet ========>', sheet)
       const worksheetData = {}
 
       const { worksheetDataVerification } = worksheetProperty(
@@ -70,14 +72,17 @@ function luckyToUniver(luckyJson) {
         sheet,
       )
 
-      const sheetKey = worksheetData.id
+      const sheetId = worksheetData.id
 
       if (worksheetDataVerification && worksheetDataVerification.length > 0) {
-        dataValidationData[sheetKey] = worksheetDataVerification
+        dataValidationData[sheetId] = worksheetDataVerification
       }
 
-      workbookData.sheets[sheetKey] = worksheetData
-      workbookData.sheetOrder.push(sheetKey)
+      worksheetConfig(workbookData, worksheetData, luckyJson, sheet)
+      cellData(workbookData, worksheetData, luckyJson, sheet)
+
+      workbookData.sheets[sheetId] = worksheetData
+      workbookData.sheetOrder.push(sheetId)
     }
   }
 
@@ -88,5 +93,7 @@ function luckyToUniver(luckyJson) {
     },
   ]
 
+  console.log('workbookData ========>', workbookData)
+  console.log('--------------------------------------------')
   return workbookData
 }

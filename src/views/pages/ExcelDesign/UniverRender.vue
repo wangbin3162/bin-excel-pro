@@ -169,12 +169,12 @@ async function importExcel() {
   const file = await inputLoad()
   if (!file) return
 
-  // isShow.value = false
+  isShow.value = false
   const univerData = await importExcelToUninver(file)
-  console.log('univerData ========>', univerData)
-  // univerInfo.value = univerData
-  // await nextTick()
-  // isShow.value = true
+  // console.log('univerData ========>', univerData)
+  univerInfo.value = univerData
+  await nextTick()
+  isShow.value = true
 }
 
 // 创建载入
