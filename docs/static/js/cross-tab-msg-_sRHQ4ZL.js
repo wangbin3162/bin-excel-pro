@@ -1,0 +1,1 @@
+const s=new BroadcastChannel("ExcelChannel");function a(e,n){s.postMessage({type:e,content:n})}function o(e){const n=t=>e&&e(t.data);return s.addEventListener("message",n),()=>s.removeEventListener("message",n)}export{o as l,a as s};
